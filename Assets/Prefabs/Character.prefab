@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7906956005342541807}
   - component: {fileID: 4398187055892646411}
+  - component: {fileID: 5696018232362935317}
   - component: {fileID: 1623731506047877122}
   - component: {fileID: 6528255344941399919}
+  - component: {fileID: 9170633083224391017}
   - component: {fileID: 3865334965043524365}
   - component: {fileID: 5437658599115080233}
   - component: {fileID: 884304166721421290}
@@ -57,6 +59,19 @@ MonoBehaviour:
   _zOffset: -10
   _xOffset: 0
   _yOffset: 0
+--- !u!114 &5696018232362935317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28599003559950206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7a5b68669a5395489beeb366879df51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  light: {fileID: 6635305397851822409}
 --- !u!50 &1623731506047877122
 Rigidbody2D:
   serializedVersion: 4
@@ -70,7 +85,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 5
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -94,6 +109,155 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0.01}
   serializedVersion: 2
   m_Radius: 0.03
+--- !u!114 &9170633083224391017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28599003559950206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: c231f5db566b02a49b62e118ef8b57c4, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bff56714-c95a-42e9-ae29-cd741338af72
+    m_ActionName: Main  Controls/Walk[/XInputControllerWindows/leftStick]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3084973539620754287}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.DashController,
+          Assembly-CSharp
+        m_MethodName: Dash
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: be68ddc5-9e60-40d6-9ead-d16f4c8d1013
+    m_ActionName: Main  Controls/Dash[/XInputControllerWindows/buttonEast]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3084973539620754287}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.DashController,
+          Assembly-CSharp
+        m_MethodName: Return
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5cc8a01f-52c3-4274-8662-9436e67a1ede
+    m_ActionName: Main  Controls/Dash Return[/XInputControllerWindows/buttonNorth]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5437658599115080233}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.CharacterFightController,
+          Assembly-CSharp
+        m_MethodName: TriggerAttack
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3865334965043524365}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.CharacterMovementController,
+          Assembly-CSharp
+        m_MethodName: StopMovementForInteraction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9716aa27-71d0-46aa-bd9e-1ba62dd985cb
+    m_ActionName: Main  Controls/Attack[/XInputControllerWindows/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 884304166721421290}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.TrackController,
+          Assembly-CSharp
+        m_MethodName: TriggerAndTrack
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 64ffd601-0fbb-484d-bce3-61781e4de389
+    m_ActionName: Main  Controls/Trigger And Track[/XInputControllerWindows/rightTrigger]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5696018232362935317}
+        m_TargetAssemblyTypeName: Platformer.Visuals.Character.CharacterVisualsController,
+          Assembly-CSharp
+        m_MethodName: ToggleLights
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 35e150a2-a405-40bc-a4a4-f871f5da9318
+    m_ActionName: Main  Controls/ToggleLights[/XInputControllerWindows/rightStickPress]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3865334965043524365}
+        m_TargetAssemblyTypeName: Platformer.Mechanics.Character.CharacterMovementController,
+          Assembly-CSharp
+        m_MethodName: OverLoad
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 45eb2b92-a57c-4c27-b54b-c1c2fee76dc3
+    m_ActionName: Main  Controls/OverLoad[/XInputControllerWindows/leftTrigger]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Gamepad
+  m_DefaultActionMap: Main  Controls
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!114 &3865334965043524365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,10 +272,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 1623731506047877122}
   animator: {fileID: 5563048529720462036}
-  maxMovementSpeed: 0.75
+  maxMovementSpeed: 1
   minMovementSpeed: 0
   currentSpeed: 1
   movementSlow: 1
+  overLoadTime: 5
+  overLoadCooldownTime: 30
 --- !u!114 &5437658599115080233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,17 +290,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4bc0d1a63336a24c98a3dae22b57369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitPoints: 10
-  movement: {fileID: 3865334965043524365}
   animator: {fileID: 5563048529720462036}
-  immuneTime: 0
+  maxHitPoints: 1
   aimPunchResistance: 1
-  attackRange: 0.16
+  attackRange: 1
+  attackDashRange: 0.5
   damage:
-    _amountOfDamage: 2
-    _aimPunch: 0
-    _isInstant: 1
-  attackAnimationTime: 0.3
+    amountOfDamage: 1
+    aimPunch: 1
+    isInstant: 1
+    orrigin: {x: 0, y: 0, z: 0}
 --- !u!114 &884304166721421290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,11 +312,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4381c5178f7602144be84c0d44b361e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 0}
-  stopTime: 0.25
-  coolldownTime: 1
+  coolldownTime: 20
   trackingTime: 3
-  interval: 0.25
+  castingTime: 1
 --- !u!114 &3084973539620754287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,20 +328,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterBody: {fileID: 1623731506047877122}
-  movement: {fileID: 3865334965043524365}
+  multiplier: 0.6
   maxNumberOfDashes: 3
-  numberOfFractions: 1
-  multiplier: 10
-  fractionDelay: 0.1
-  lastFractionDelay: 0.1
-  slow: 3
-  slowTime: 1
-  returnStopTime: 0.25
-  defaultCooldownTime: 5
-  returnCooldownTime: 3
-  returnCooldownRefreshTime: 2
-  cooldownDistance: 0.2
-  cooldownTriggeringTime: 2
+  cooldownTime: 5
+  returnCooldownTime: 2
+  lastReturnCooldownTime: 0.5
+  cooldownTriggeringTime: 0.8
 --- !u!1 &3629965735997672704
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,7 +446,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -3634
+  m_InstanceId: -49328
 --- !u!95 &5563048529720462036
 Animator:
   serializedVersion: 3

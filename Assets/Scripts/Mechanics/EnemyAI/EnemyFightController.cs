@@ -64,6 +64,8 @@ namespace Platformer.Mechanics.EnemyAI
                         lastAttackTime -= Time.deltaTime;
                     else
                     {
+                        animator.SetTrigger(Constants.ATTACK);
+
                         // Toggle attack
                         collision.SendMessage("OnDamageTaken", damage);
 

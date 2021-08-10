@@ -201,7 +201,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 5
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -237,17 +237,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15952137a43d26d43bf1f547e7269b81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitPoints: 10
+  maxHitPoints: 100
+  filter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
   movement: {fileID: 2517040872108294049}
   animator: {fileID: 2517040872645554893}
   immuneTime: 0
   aimPunchResistance: 1
-  attackRange: 0.11
+  attackDashRange: 1
+  attackRange: 0.002
   damage:
     _amountOfDamage: 1
     _aimPunch: 0
-    _isInstant: 1
-  _attackToggleRange: 0.17
+    _isInstant: 0
+  _attackToggleRange: 0
   attackCooldown: 1
 --- !u!114 &2517040872108294049
 MonoBehaviour:
@@ -388,7 +403,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -11310
+  m_InstanceId: -21680
 --- !u!95 &2517040872645554893
 Animator:
   serializedVersion: 3

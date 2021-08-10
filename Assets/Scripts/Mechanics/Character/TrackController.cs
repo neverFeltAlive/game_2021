@@ -6,9 +6,10 @@
 /// </remarks>
 
 
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 using Platformer.Utils;
 
@@ -26,166 +27,195 @@ namespace Platformer.Mechanics.Character
      */
     /* TODO
      * 
-     * Make triggerable
-     * Think about moving saved coordinates to Heap with collections
-     * 
      */
     {
-        // Fields
+        public enum TrackingState
+        {
+            Ready,
+            Active,
+            Off,
+            OnCooldown 
+        }
+
+
+
+        public static event EventHandler<OnTrackStateChangedEventArgs> OnTrackStateChanged;
+        public class OnTrackStateChangedEventArgs : EventArgs
+        {
+            public TrackingState state;
+        }
+        public static event EventHandler<OnTrackEventArgs> OnTrack;
+        public class OnTrackEventArgs : EventArgs
+        {
+            public float castingTime;
+        }
+
+
 
         #region Serialized Fields
-        [Space]
-        [Space]
-        [Header("TrackController Script")]
-        [Space]
-        [Header("Components")]
-        [SerializeField] private CharacterMovementController movement;
-        [Space]
-        [Header("Variables")]
-        [SerializeField] [Range(0f, 5f)] [Tooltip("Movement stop time after track")] private float stopTime = 0.25f;
-        [Space]
-        [SerializeField] [Range(0f, 10f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 1f;
-        [Space]
-        [SerializeField] [Range(0f, 80f)] [Tooltip("Time to which character travels back in seconds")] private float trackingTime = 10f;
-        [SerializeField] [Range(0, 1)] [Tooltip("Coordinats saving interval in fractions of a second (by default is equal to fixed delta time)")] private float interval = 0.25f;
+        [SerializeField] [Range(15f, 100f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 20f;
+        [SerializeField] [Range(0f, 7f)] [Tooltip("Time to which character travels back in seconds")] private float trackingTime = 3f;
+        [SerializeField] [Tooltip("Time to which character travels back in seconds")] private float castingTime = 1f;
         #endregion
 
         #region Private Fields
-        private Vector2[] savedCoordinates;             // save coordinates
+        private Vector2[] savedCoordinates;             
 
-        private int numberOfIntervals;                  // number of intervals in tracking time (number of saved coordinates in array)
+        private TrackingState state;
 
-        private bool onCooldown = false;                // flag for track cooldownTime
-        private bool isSaving = false;                  // flag for saving coroutine
-        private bool triggerTrack = false;              // trigger track
+        private float savingTime = 10f;
+        private float currentSavingTime;
+        private float currentCooldownTime;
         #endregion
 
-        #region Properties
-        #endregion
+        private bool showDebug = true;
+        /// <remarks>
+        /// Set to true to show debug vectors
+        /// </remarks>
 
-        // Functions 
 
         #region Context Menu
         [ContextMenu("Default values")]
         private void DefaultValues()
         {
-            coolldownTime = 1f;
+            coolldownTime = 20f;
             trackingTime = 3f;
-            interval = 0.25f;
-            stopTime = 0.25f;
+            castingTime = 1f;
         }
         #endregion
 
         #region MonoBehaviour Callbacks
-        // When the script is enabled
         private void Start()
         {
-            // Assign variables
-            if (interval == 0)
-                interval = Time.fixedDeltaTime;
-            if (!movement)
-                movement = gameObject.GetComponent<CharacterMovementController>();
+            currentCooldownTime = coolldownTime;
+            currentSavingTime = savingTime;
+            state = TrackingState.Off;
 
-            numberOfIntervals = (int)(trackingTime * 1 / interval);
-            savedCoordinates = new Vector2[numberOfIntervals];
-        }
-
-        // Every frame
-        private void Update()
-        {
-            // Trigger time travel
-            if (Input.GetButtonDown(Constants.X_BUTTON) && !onCooldown)
-                triggerTrack = true;
-
-            // Restart saving coroutine
-            if (!isSaving)
-                StartCoroutine(Save());
+            if (showDebug) OnTrackStateChanged += ShowState;
         }
 
         private void FixedUpdate()
         {
-            // Move character
-            if (triggerTrack)
-            {
-                gameObject.transform.position = savedCoordinates[savedCoordinates.Length - 1];
+            if (state == TrackingState.Active || state == TrackingState.Ready)
+                HandleSaving();
 
-                // Start cooldownTime
-                StartCoroutine(Cooldown());
-
-                // Stop movement
-                movement.StopMoving(stopTime);
-                /// <remarks>
-                /// Stopping movement is needed for the same purpose as in dash mechanics
-                /// </remarks>
-
-                // Manage flags 
-                triggerTrack = false;
-            }
+            if (state == TrackingState.OnCooldown)
+                HandleCooldown();
         }
         #endregion
 
-        #region Private Functions
-        #endregion
-
-        #region Event Handlers
-        #endregion
-
-        // Methods
-
-        #region Private Methods
-        #endregion
-
-        // Coroutines
-
-        #region IEnumerators
-        // Saving coroutin 
-        IEnumerator Save()
+        #region Functions
+        // Counts down cooldown time
+        private void HandleCooldown()
         {
-            // Manage flag
-            isSaving = true;
-
-            for (int i = 0; i < savedCoordinates.Length; i++)
+            if (currentCooldownTime - Time.fixedDeltaTime > 0)
+                currentCooldownTime -= Time.fixedDeltaTime;
+            else
             {
-                // Move all elements 1 index up
+                state = TrackingState.Off;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                currentCooldownTime = coolldownTime;
+            }
+        }
+        
+        // Saves the coordinates and counts down the time track is active
+        private void HandleSaving()
+        {
+            if (currentSavingTime - Time.fixedDeltaTime > 0)
+            {
+                currentSavingTime -= Time.fixedDeltaTime;
+
+                // Check if the array is filled for the first time
+                if (currentSavingTime <= savingTime - trackingTime && state != TrackingState.Ready)
+                {
+                    state = TrackingState.Ready;
+                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                }
+
                 for (int j = savedCoordinates.Length - 1; j > 0; j--)
                     savedCoordinates[j] = savedCoordinates[j - 1];
+                savedCoordinates[0] = transform.position;
+                /// <summary>
+                /// Its basicaly a stack-like system (last in - first out). Every selected interval a new elemnt is added which will be taken when the whole time period is over
+                /// If there will be problems with optimization we can return intrval system (save coordinates not every fixed update but a much bigger time period
+                /// </summary>
 
-                // Save coordinates to the first element
-                savedCoordinates[0] = gameObject.transform.position;
-
-                // Wait for the next saving interval
-                yield return new WaitForSeconds(interval);
+                if (showDebug) UtilsClass.DrawCross(transform.position, Color.white, 5f);
             }
-            /// <summary>
-            /// Its basicaly a stack-like system (last in - first out). Every selected interval a new elemnt is added which will be taken when the whole time period is over
-            /// </summary>
-
-            // DEBUG
-            Debug.Log("<size=13><i><b> TrackController --> </b></i><color=blue> Corutine: </color></size>Saving cycle finished ");
-
-            // Manage flags
-            isSaving = false;
+            else
+            {
+                state = TrackingState.OnCooldown;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+            }
         }
 
-        // Cooldown coroutine
-        IEnumerator Cooldown()
+        private void ShowState(object sender, OnTrackStateChangedEventArgs args) =>
+            Debug.Log("<size=13><i><b> TrackController --> </b></i><color=green> ShowState: </color></size>" + args.state);
+
+        // Performs the actual track (is triggered by Player Input)
+        public void Track(InputAction.CallbackContext context)
         {
-            // Manage flags
-            onCooldown = true;
+            if (!context.performed)
+                return;
 
-            // DEBUG
-            Debug.Log("<size=13><i><b> TrackController --> </b></i><color=blue> Corutine: </color></size> Track on cooldown");
+            if (state == TrackingState.Ready)
+            {
+                state = TrackingState.OnCooldown;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
+                StartCoroutine(TrackCoroutine());
+            }
+        }
 
-            // Wait for cooldownTime
-            yield return new WaitForSeconds(coolldownTime);
+        // Triggers the saving cycle (is triggered by Player Input)
+        public void TriggerTracking(InputAction.CallbackContext context)
+        {
 
-            // DEBUG
-            Debug.Log("<size=13><i><b> TrackController --> </b></i><color=blue> Corutine: </color></size> Track ready");
+            if (!context.performed)
+                return;
 
-            // Manage flags
-            onCooldown = false; 
+            if (state == TrackingState.Off)
+            {
+                state = TrackingState.Active;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
+                currentSavingTime = savingTime;
+            }
+        }
+
+        // Binds both action to one button
+        public void TriggerAndTrack(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                if (state == TrackingState.Off)
+                {
+                    state = TrackingState.Active;
+                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                    savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
+                    currentSavingTime = savingTime;
+                }
+            }
+
+            if (context.canceled)
+            {
+                if (state == TrackingState.Ready)
+                {
+                    state = TrackingState.OnCooldown;
+                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                    OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
+                    StartCoroutine(TrackCoroutine());
+                }
+            }
         }
         #endregion
 
+
+
+        IEnumerator TrackCoroutine()
+        {
+            yield return new WaitForSeconds(castingTime);
+            gameObject.transform.position = savedCoordinates[savedCoordinates.Length - 1];
+        }
     }
 }

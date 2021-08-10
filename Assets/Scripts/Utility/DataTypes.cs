@@ -65,30 +65,20 @@ namespace Platformer.Utils
     {
         #region Serialized Fields
         [Header("Damage Stats")]
-        [SerializeField] [Range(1, 20)] [Tooltip("Weapons damage in hit points")] private int _amountOfDamage = 1;
-        [SerializeField] [Range(1f, 30f)] [Tooltip("Push force of a weapon")] private float _aimPunch = 1f;
-        [Space]
-        [SerializeField] [Tooltip("Damage type")] private bool _isInstant = true;
+        [Range(1, 20)] [Tooltip("Weapons damage in hit points")] public int amountOfDamage = 1;
+        [Range(1f, 30f)] [Tooltip("Push force of a weapon")] public float aimPunch = 1f;
+        [Tooltip("Damage type")] public bool isInstant = true;
         #endregion
 
-        #region Private Fields
-        private Vector3 _orrigin;                // save where damage came from
-        #endregion
+        [HideInInspector] public Vector3 orrigin;
 
-        #region Properties
-        public bool IsInstant { get { return _isInstant; } }
-        public int AmountOfDamage { get { return _amountOfDamage; } }
-        public float AimPunch { get { return _aimPunch; } }
-        public Vector3 Orrigin { get { return _orrigin; } }
-        #endregion
+        
 
-        // Cunstructors 
-
-        public Damage(bool instant = true, int amount = 1, float punch = 1f)
+        public Damage(bool instant, int amount, float punch)
         {
-            this._aimPunch = punch;
-            this._amountOfDamage = amount;
-            this._isInstant = instant;
+            this.aimPunch = punch;
+            this.amountOfDamage = amount;
+            this.isInstant = instant;
         }
         /// <summary>
         /// We basically need a constructor only to assign values in context menu functions outside this script

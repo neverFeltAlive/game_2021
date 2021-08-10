@@ -6,12 +6,12 @@
 /// </remarks>
 
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
-using Platformer.Utils;
 using Platformer.Mechanics.General;
 
 namespace Platformer.Mechanics.Character
@@ -27,109 +27,122 @@ namespace Platformer.Mechanics.Character
      * 
      */
     {
-        // Functions 
-
-        #region MonoBehaviour Callbacks
-        protected sealed override void Start()=>
-            // Call base class 
-            base.Start();
-
-        private void Update()
+        public enum OverLoadState
         {
-            // Define movement _direction based on user input
-            float horizontalDirection = Input.GetAxis(Constants.MOVEMENT_JOYSTICK_X);
-            float vertivalDirection = Input.GetAxis(Constants.MOVEMENT_JOYSTICK_Y);
-            Direction = new Vector2(horizontalDirection, vertivalDirection);
+            Active, 
+            Charging,
+            InActive,
+            OnCooldown
         }
 
+
+
+        public static event EventHandler<OnOverLoadStateChangeEventArgs> OnOverLoadStateChange;
+        public class OnOverLoadStateChangeEventArgs : EventArgs
+        {
+            public OverLoadState state;
+        }
+
+
+
+        #region Serialized Fields
+        [Header("OverLoad Stats")]
+        [SerializeField] [Range(1f, 10f)] [Tooltip("Time overload remains active after casting")] private float overLoadTime = 5f;
+        [SerializeField] [Range(10f, 100f)] private float overLoadCooldownTime = 30f;
+        #endregion
+
+        #region Private Fields
+        private OverLoadState overLoadState;
+
+        private Vector2 input;
+
+        private PlayerControls playerControls;
+        #endregion
+
+
+
+        #region MonoBehaviour Callbacks
+        protected sealed override void Start()
+        {
+            base.Start();
+
+            playerControls = new PlayerControls();
+            playerControls.MainControls.Enable();
+
+            DashController.OnDashStateChanged += DashHandler;
+            TrackController.OnTrack += TrackHandler;
+
+            overLoadState = OverLoadState.InActive;
+        }
+
+        private void Update() =>
+            input = playerControls.MainControls.Walk.ReadValue<Vector2>();
+
         protected void FixedUpdate() =>
-            Move(Direction);
+            Move(input);
 
         #endregion
 
-        /*   // Fields
+        private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
+        {
+            if (args.state == DashController.DashState.Active)
+                StartCoroutine(DisableMovement(2f));
+        }
 
-           #region Serialized Fields
-           [Header("Components")]
-           [SerializeField] private Rigidbody2D characterBody;
-           [Space]
+        private void TrackHandler(object sender, TrackController.OnTrackEventArgs args)
+        {
+            StartCoroutine(DisableMovement(args.castingTime));
+        }
 
-           [Header("Variables")]
-           [SerializeField] [Range(0f, 5f)] [Tooltip("Experiment with speed values")] private float _movementSpeed = 1f;
-           [Space]
+        public void StopMovementForInteraction(InputAction.CallbackContext context)
+        {
+            if (context.started)
+                isStopped = true;
+            else if (context.canceled)
+                isStopped = false;
+        }
 
-           [Header("Controls")]
-           [SerializeField] private ControlKeys moveKey = ControlKeys.M;               // define move key
-           #endregion
+        public void OverLoad(InputAction.CallbackContext context)
+        {
+            if (context.interaction is HoldInteraction)
+            {
+                if (context.started)
+                {
+                    isStopped = true;
+                    overLoadState = OverLoadState.Charging;
+                    OnOverLoadStateChange?.Invoke(this, new OnOverLoadStateChangeEventArgs { state = overLoadState });
+                }
+                if (context.performed)
+                {
+                    isStopped = false;
+                    StartCoroutine(OverLoad());
+                }
+            }
+        }
 
-           #region Private Fields
-           private Vector2 _direction;                                                  // define the _direction for future movement
+        private void ShowState(object sender, OnOverLoadStateChangeEventArgs args) =>
+            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
 
-           private string moveKeyStr;                                                  // contain move key string
-           private bool triggerMovement = false;                                       // trigger movement
-           #endregion
+        IEnumerator DisableMovement(float time = 0)
+        {
+            isStopped = true;
+            if (time == 0)
+                yield return new WaitForFixedUpdate();
+            else
+                yield return new WaitForSeconds(time);
+            isStopped = false;
+        }
 
-           #region Properties
-           public Vector2 Direction { get { return _direction; } }
-           public float currentSpeed { get { return _movementSpeed; } set { _movementSpeed = value; } }
-           #endregion
-
-           // Functions 
-
-           #region MonoBehaviour Callbacks
-           private void Start()
-           {
-               // Manage keys
-               moveKeyStr = CommonMethods.SwitchKeys(moveKey);
-
-               // Check if all required elements are assigned
-               if (!characterBody)
-                   characterBody = gameObject.GetComponent<Rigidbody2D>();
-           }
-
-           private void Update()
-           {
-               // Define movement _direction based on user input
-               float horizontalDirection = Input.GetAxis(Constants.MOVEMENT_X);
-               float vertivalDirection = Input.GetAxis(Constants.MOVEMENT_Y);
-               if (horizontalDirection != 0f || vertivalDirection != 0f)                             // check if _direction was changed
-                   _direction = new Vector2(horizontalDirection, vertivalDirection);
-
-               // Prevent continious movement
-               if (!Input.GetKey(moveKeyStr))
-                   triggerMovement = false;
-
-               // Trigger movement
-               if (Input.GetKeyDown(moveKeyStr))
-                   triggerMovement = true;
-
-               // Stop movement
-               if (Input.GetKeyUp(moveKeyStr))
-                   triggerMovement = false;
-           }
-
-           private void FixedUpdate()
-           {
-               // Swap target's sprite to match movement _direction
-               if (_direction.x >= 0)
-                   gameObject.transform.localScale = Vector3.one;
-               else
-                   gameObject.transform.localScale = new Vector3(-1, 1, 1);
-
-               // Move RigitBody
-               if (triggerMovement)
-                   characterBody.MovePosition(characterBody.position + _direction * _movementSpeed * Time.fixedDeltaTime);
-           }
-
-           #endregion
-
-           #region Private Functions
-           #endregion
-
-           // Methods
-
-           #region Private Methods
-           #endregion*/
-
+        IEnumerator OverLoad()
+        {
+            overLoadState = OverLoadState.Active;
+            OnOverLoadStateChange?.Invoke(this, new OnOverLoadStateChangeEventArgs { state = overLoadState });
+            yield return new WaitForSeconds(overLoadTime);
+            overLoadState = OverLoadState.OnCooldown;
+            OnOverLoadStateChange?.Invoke(this, new OnOverLoadStateChangeEventArgs { state = overLoadState });
+            yield return new WaitForSeconds(overLoadCooldownTime);
+            overLoadState = OverLoadState.InActive;
+            OnOverLoadStateChange?.Invoke(this, new OnOverLoadStateChangeEventArgs { state = overLoadState });
+        }
     }
 }

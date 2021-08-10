@@ -6,9 +6,10 @@
 /// </remarks>
 
 
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 using Platformer.Mechanics.General;
 using Platformer.Utils;
@@ -29,21 +30,15 @@ namespace Platformer.Mechanics.Character
      * 
      */
     {
-        // Fields
+        #region Priavte Fields
+        private bool overLoad = true;
 
-        #region Serialized Fields
-        [Space]
-        [Space]
-        [Header("Mover Script")]
-        [Space]
-        [Header("Variables")]
-        [SerializeField] [Range(0.1f, 5f)] [Tooltip("Time it takes to perform attack (needed for movement stopping)")] private float attackAnimationTime = 0.3f;
+        private Vector3 direction;
+
+        private PlayerControls playerControls;
         #endregion
 
-        // Functions 
 
-        #region Context Menu
-        #endregion
 
         #region MonoBehaviour Callbacks
         protected sealed override void Start()
@@ -51,29 +46,48 @@ namespace Platformer.Mechanics.Character
             base.Start();
 
             targetTag = Constants.ENEMY_TAG;
+
+            playerControls = new PlayerControls();
+            playerControls.MainControls.Enable();
+
+            CharacterMovementController.OnOverLoadStateChange += OverLoadHandler;
+
+            overLoad = false;
         }
 
         protected sealed override void Update()
         {
             base.Update();
 
-            if (Input.GetButtonDown(Constants.A_BUTTON))
-            {
-                // Disable movement
-                movement.StopMoving(attackAnimationTime);
-
-                Attack();
-            }
+            Vector2 input = playerControls.MainControls.Walk.ReadValue<Vector2>();
+            if (input != Vector2.zero)
+                direction = input;
         }
         #endregion
 
-        #region Event Handlers
-        #endregion
+        public void TriggerAttack(InputAction.CallbackContext context)
+        {
+            if (context.interaction is HoldInteraction)
+            {
+                if (context.performed)
+                    StartCoroutine(PowerAttack(direction));
+            }
+            else
+            {
+                // Check interaction to destinquish power and simple attack
+                if (overLoad)
+                    StartCoroutine(PowerAttack(direction));
+                else
+                    HandleAttack(direction);
+            }
+        }
 
-        // Methods
-
-        #region Private Methods
-        #endregion
-
+        private void OverLoadHandler(object sender, CharacterMovementController.OnOverLoadStateChangeEventArgs args)
+        {
+            if (args.state == CharacterMovementController.OverLoadState.Active)
+                overLoad = true;
+            else
+                overLoad = false;
+        }
     }
 }

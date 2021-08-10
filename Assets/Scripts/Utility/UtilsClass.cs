@@ -23,7 +23,6 @@ namespace Platformer.Utils
      * 
      */
     {
-        #region Methods
         // Create text in a given world position
         public static TextMesh CreateWorldText(string text, 
             Color color, Transform parent, 
@@ -52,7 +51,14 @@ namespace Platformer.Utils
         /// We instantiate a new object with Text Mesh component 
         /// and set it up according to given params
         /// </summary>
-        #endregion
+        
 
+        public static void DrawCross(Vector3 center, Color color, float time)
+        {
+            Debug.DrawLine(new Vector3(center.x - .01f, center.y - .01f),
+                    new Vector3(center.x + .01f, center.y + .01f), color, time);
+            Debug.DrawLine(new Vector3(center.x - .01f, center.y + .01f),
+                new Vector3(center.x + .01f, center.y - .01f), color, time);
+        }
     }
 }
