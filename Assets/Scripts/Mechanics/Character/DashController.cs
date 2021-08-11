@@ -66,7 +66,9 @@ namespace Platformer.Mechanics.Character
         #region Serialized Fields
         [SerializeField] private Rigidbody2D characterBody;
         [Space]
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force")] private float multiplier = .6f;
+        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force")] private float multiplier = .45f;
+        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
+        [SerializeField] [Range(0f, 100f)] [Tooltip("Minimum value for the input to be changed")] private float minMagnitude = .45f;
         [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 3;
         [Space]
         [Header("Cooldown settings")]
@@ -105,7 +107,9 @@ namespace Platformer.Mechanics.Character
             characterBody = gameObject.GetComponent<Rigidbody2D>();
             characterBody.drag = 5f;
 
-            multiplier = .6f;
+            multiplier = .45f;
+            overLoadMultiplier = 1f;
+            minMagnitude = .45f;
             maxNumberOfDashes = 3;
 
             cooldownTime = 5f;
@@ -149,8 +153,10 @@ namespace Platformer.Mechanics.Character
             CheckCooldownTriggeringTime();
 
             Vector2 input = playerControls.MainControls.Walk.ReadValue<Vector2>();
-            if (input.magnitude > .4f)
+            if (input.magnitude > minMagnitude)
                 direction = input;
+            else if (input.magnitude > .01f)
+                direction = input * minMagnitude / input.magnitude;
         }
         #endregion
 
@@ -168,6 +174,8 @@ namespace Platformer.Mechanics.Character
                 else
                     currentCooldownTriggeringTime -= Time.deltaTime;
             }
+            else
+                currentCooldownTriggeringTime = cooldownTriggeringTime;
         }
 
         public void Dash(InputAction.CallbackContext context)
@@ -241,6 +249,7 @@ namespace Platformer.Mechanics.Character
 
 
 
+        #region Coroutines
         IEnumerator Cooldown(float time)
         {
             dashState = DashState.OnCooldown;
@@ -264,7 +273,7 @@ namespace Platformer.Mechanics.Character
 
             Vector2 target;
             if (isPowerDash)
-                target = transform.position + direction * multiplier * 3;
+                target = transform.position + direction * overLoadMultiplier;
             else
                 target = transform.position + direction * multiplier;
 
@@ -305,6 +314,7 @@ namespace Platformer.Mechanics.Character
                 }
             }
         }
+        #endregion
     }
 }
 

@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 namespace Platformer
 {
@@ -20,9 +16,13 @@ namespace Platformer
      * 
      */
     {
-        public void TestButtonPressed(InputAction.CallbackContext context)
+        Vector2[] testArray;
+        public void Start()
         {
-            Debug.Log("<size=13><i><b> TestInputSystem --> </b></i><color=green> Function: </color></size>" + context.phase);
+            testArray = new Vector2[3];
+
+            Debug.Log(testArray[0] + "" +  testArray[1]);
+            Debug.Log(default(Vector2));
         }
     }
 }

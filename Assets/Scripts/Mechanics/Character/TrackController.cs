@@ -167,7 +167,7 @@ namespace Platformer.Mechanics.Character
             }
         }
 
-        // Triggers the saving cycle (is triggered by Player Input)
+/*        // Triggers the saving cycle (is triggered by Player Input)
         public void TriggerTracking(InputAction.CallbackContext context)
         {
 
@@ -182,7 +182,7 @@ namespace Platformer.Mechanics.Character
                 currentSavingTime = savingTime;
             }
         }
-
+*/
         // Binds both action to one button
         public void TriggerAndTrack(InputAction.CallbackContext context)
         {
@@ -199,13 +199,10 @@ namespace Platformer.Mechanics.Character
 
             if (context.canceled)
             {
-                if (state == TrackingState.Ready)
-                {
-                    state = TrackingState.OnCooldown;
-                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                    OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
-                    StartCoroutine(TrackCoroutine());
-                }
+                state = TrackingState.OnCooldown;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
+                StartCoroutine(TrackCoroutine());
             }
         }
         #endregion
@@ -215,7 +212,22 @@ namespace Platformer.Mechanics.Character
         IEnumerator TrackCoroutine()
         {
             yield return new WaitForSeconds(castingTime);
-            gameObject.transform.position = savedCoordinates[savedCoordinates.Length - 1];
+
+            if (savedCoordinates[savedCoordinates.Length - 1] != default(Vector2))
+                gameObject.transform.position = savedCoordinates[savedCoordinates.Length - 1];
+            else
+            {
+                for (int i = savedCoordinates.Length - 1; i >= 0; i--)
+                {
+                    if (savedCoordinates[i] != default(Vector2))
+                    {
+                        transform.position = savedCoordinates[i];
+                        break;
+                    }
+                    else if (i == 0)
+                        transform.position = savedCoordinates[i];
+                }
+            }
         }
     }
 }
