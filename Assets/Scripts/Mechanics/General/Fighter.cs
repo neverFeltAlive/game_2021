@@ -32,6 +32,14 @@ namespace Platformer.Mechanics.General
      * 
      */
     {
+        public enum PowerAttackState
+        {
+            Ready,
+            Active
+        }
+
+
+
         public static event EventHandler<OnAttackEventArgs> OnAttack;
         public class OnAttackEventArgs : EventArgs
         {
@@ -49,14 +57,15 @@ namespace Platformer.Mechanics.General
         [SerializeField] protected Animator animator;
         [Space]
         [Header("Health Stats")]
-        [SerializeField] [Range(1, 100)] [Tooltip("Maximum amount of health")] private int maxHitPoints = 1;
-        [SerializeField] [Range(1f, 10f)] [Tooltip("Resistance to the aim punch force")] private float aimPunchResistance = 1f;
+        [SerializeField] [Range(1, 100)] [Tooltip("Maximum amount of health")] protected int maxHitPoints = 5;
+        [SerializeField] [Range(1f, 10f)] [Tooltip("Resistance to the aim punch force")] protected float aimPunchResistance = 1f;
         [Space]
         [Header("Attack Stats")]
-        [SerializeField] [Range(0f, 1f)] [Tooltip("Range of melee attack")] private float attackRange = 1f;
-        [SerializeField] [Range(0f, 1f)] [Tooltip("Distance on which object gets pushed when attacking")] private float attackDashRange = 0.5f;
+        [SerializeField] [Range(0f, 1f)] [Tooltip("Range of melee attack")] protected float attackRange = .2f;
+        [SerializeField] [Range(0f, 1f)] [Tooltip("Distance on which object gets pushed when attacking")] protected float attackDashRange = 0.2f;
         [Space]
         [SerializeField] [Tooltip("Damage object")] protected Damage damage;
+        [SerializeField] [Tooltip("Damage object")] protected Damage powerAttackDamage;
         #endregion
 
         #region Private Fields
@@ -71,18 +80,6 @@ namespace Platformer.Mechanics.General
         /// </remarks>
 
 
-
-        #region Contex Menu
-        [ContextMenu("Default Values")]
-        private void DefaultValues()
-        {
-            maxHitPoints = 1;
-            aimPunchResistance = 1f;
-
-            attackRange = 1f;
-            attackDashRange = 0.5f;
-        }
-        #endregion
 
         #region MonoBehaviour CallBacks
         protected virtual void Start()
@@ -101,8 +98,10 @@ namespace Platformer.Mechanics.General
         #endregion
 
         #region Protected Functions
-        protected virtual void HandleAttack(Vector3 direction)
+        protected virtual void HandleAttack(Vector3 direction, bool isPower = false)
         {
+            Damage dmg = isPower ? powerAttackDamage : damage;
+
             // Trigger attack animation
             animator.SetTrigger(Constants.ATTACK);
             OnAttack?.Invoke(this, new OnAttackEventArgs { isPower = false });
@@ -112,7 +111,7 @@ namespace Platformer.Mechanics.General
             /// Best working angles: from 45 to 20
             /// </remarks>
             
-            damage.orrigin = transform.position;
+            dmg.orrigin = transform.position;
             Vector3 directionVector = transform.position + direction.normalized * attackRange;
 
             // Detect collisions in attack range
@@ -120,7 +119,7 @@ namespace Platformer.Mechanics.General
             foreach (Collider2D collision in collisions)
             {
                 if (collision.tag == targetTag && VallidateTargetLocation(direction, directionVector, collision.transform, angle))
-                    collision.SendMessage("TakeDamage", damage);
+                    collision.SendMessage("TakeDamage", dmg);
             }
         }
 
@@ -205,7 +204,7 @@ namespace Platformer.Mechanics.General
             if (showDebug) Debug.DrawLine(transform.position, transform.position + direction.normalized * attackDashRange, Color.yellow, 2f);
 
             yield return new WaitForFixedUpdate();
-            HandleAttack(direction);
+            HandleAttack(direction, true);
         }
     }
 }

@@ -46,6 +46,9 @@ namespace Platformer.Mechanics.Character
 
 
         #region Serialized Fields
+        [SerializeField] [Range(0f, 5f)] private float dashMovementSlow;
+        [SerializeField] [Range(0f, 5f)] private float dashMovementSlowTime;
+        [Space]
         [Header("OverLoad Stats")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Time overload remains active after casting")] private float overLoadTime = 5f;
         [SerializeField] [Range(10f, 100f)] private float overLoadCooldownTime = 30f;
@@ -54,12 +57,24 @@ namespace Platformer.Mechanics.Character
         #region Private Fields
         private OverLoadState overLoadState;
 
-        private Vector2 input;
+        private Vector2 direction;
 
-        private PlayerControls playerControls;
+        public static PlayerControls playerControls;
         #endregion
 
 
+
+        #region Context Menu
+        [ContextMenu("Default values")]
+        private void DefaultValues()
+        {
+            maxMovementSpeed = 1f;
+            minMovementSpeed = 0f;
+
+            overLoadTime = 5f;
+            overLoadCooldownTime = 30f;
+        }
+        #endregion
 
         #region MonoBehaviour Callbacks
         protected sealed override void Start()
@@ -76,17 +91,19 @@ namespace Platformer.Mechanics.Character
         }
 
         private void Update() =>
-            input = playerControls.MainControls.Walk.ReadValue<Vector2>();
+            direction = playerControls.MainControls.Walk.ReadValue<Vector2>();
 
         protected void FixedUpdate() =>
-            Move(input);
-
+            Move(direction);
         #endregion
 
+        #region Functions
         private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
         {
             if (args.state == DashController.DashState.Active)
-                StartCoroutine(DisableMovement(2f));
+                isStopped = true;
+            if (args.state == DashController.DashState.Ready || args.state == DashController.DashState.OnCooldown)
+                isStopped = false;
         }
 
         private void TrackHandler(object sender, TrackController.OnTrackEventArgs args)
@@ -122,7 +139,11 @@ namespace Platformer.Mechanics.Character
 
         private void ShowState(object sender, OnOverLoadStateChangeEventArgs args) =>
             Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
+        #endregion
 
+
+
+        #region Coroutines
         IEnumerator DisableMovement(float time = 0)
         {
             isStopped = true;
@@ -144,5 +165,6 @@ namespace Platformer.Mechanics.Character
             overLoadState = OverLoadState.InActive;
             OnOverLoadStateChange?.Invoke(this, new OnOverLoadStateChangeEventArgs { state = overLoadState });
         }
+        #endregion
     }
 }

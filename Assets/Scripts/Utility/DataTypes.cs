@@ -66,7 +66,7 @@ namespace Platformer.Utils
         #region Serialized Fields
         [Header("Damage Stats")]
         [Range(1, 20)] [Tooltip("Weapons damage in hit points")] public int amountOfDamage = 1;
-        [Range(1f, 30f)] [Tooltip("Push force of a weapon")] public float aimPunch = 1f;
+        [Range(0f, 5f)] [Tooltip("Push force of a weapon")] public float aimPunch = .25f;
         [Tooltip("Damage type")] public bool isInstant = true;
         #endregion
 

@@ -71,7 +71,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a5b68669a5395489beeb366879df51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  light: {fileID: 6635305397851822409}
+  animator: {fileID: 5563048529720462036}
+  characterLight: {fileID: 0}
 --- !u!50 &1623731506047877122
 Rigidbody2D:
   serializedVersion: 4
@@ -271,11 +272,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 1623731506047877122}
-  animator: {fileID: 5563048529720462036}
   maxMovementSpeed: 1
   minMovementSpeed: 0
   currentSpeed: 1
   movementSlow: 1
+  dashMovementSlow: 0
+  dashMovementSlowTime: 0
   overLoadTime: 5
   overLoadCooldownTime: 30
 --- !u!114 &5437658599115080233
@@ -291,12 +293,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 5563048529720462036}
-  maxHitPoints: 1
-  aimPunchResistance: 1
-  attackRange: 1
-  attackDashRange: 0.5
+  maxHitPoints: 5
+  aimPunchResistance: 1.5
+  attackRange: 0.2
+  attackDashRange: 0.2
   damage:
     amountOfDamage: 1
+    aimPunch: 0.25
+    isInstant: 1
+    orrigin: {x: 0, y: 0, z: 0}
+  powerAttackDamage:
+    amountOfDamage: 2
     aimPunch: 1
     isInstant: 1
     orrigin: {x: 0, y: 0, z: 0}
@@ -448,7 +455,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -1838
+  m_InstanceId: -1294
 --- !u!95 &5563048529720462036
 Animator:
   serializedVersion: 3

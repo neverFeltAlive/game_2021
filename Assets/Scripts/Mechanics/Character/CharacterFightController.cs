@@ -34,11 +34,24 @@ namespace Platformer.Mechanics.Character
         private bool overLoad = true;
 
         private Vector3 direction;
-
-        private PlayerControls playerControls;
         #endregion
 
 
+
+        #region Contex Menu
+        [ContextMenu("Default Values")]
+        private void DefaultValues()
+        {
+            maxHitPoints = 5;
+            aimPunchResistance = 1.5f;
+
+            attackRange = .2f;
+            attackDashRange = .2f;
+
+            damage = new Damage(amount: 1,  punch: .25f, instant: true);
+            powerAttackDamage = new Damage(amount: 2,  punch: 1f, instant: true);
+        }
+        #endregion
 
         #region MonoBehaviour Callbacks
         protected sealed override void Start()
@@ -46,9 +59,6 @@ namespace Platformer.Mechanics.Character
             base.Start();
 
             targetTag = Constants.ENEMY_TAG;
-
-            playerControls = new PlayerControls();
-            playerControls.MainControls.Enable();
 
             CharacterMovementController.OnOverLoadStateChange += OverLoadHandler;
 
@@ -59,7 +69,7 @@ namespace Platformer.Mechanics.Character
         {
             base.Update();
 
-            Vector2 input = playerControls.MainControls.Walk.ReadValue<Vector2>();
+            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
             if (input != Vector2.zero)
                 direction = input;
         }

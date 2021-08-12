@@ -34,11 +34,10 @@ namespace Platformer.Mechanics.General
     {
         #region Serialized Fields
         [SerializeField] protected Rigidbody2D body;
-        [SerializeField] private Animator animator;
         [Space]
         [Header("Main Movement Stats")]
-        [SerializeField] [Range(0.1f, 5f)] private float maxMovementSpeed = 1f;
-        [SerializeField] [Range(0f, 1f)] private float minMovementSpeed = 1f;
+        [SerializeField] [Range(0.1f, 5f)] protected float maxMovementSpeed = 1f;
+        [SerializeField] [Range(0f, 1f)] protected float minMovementSpeed = 1f;
         [Space]
         #endregion
 
@@ -52,13 +51,12 @@ namespace Platformer.Mechanics.General
 
         public Vector2 Direction { get; protected set; }
 
+
+
         protected virtual void Start()
         {
-            // Check if all required elements are assigned
             if (!body)
                 body = gameObject.GetComponent<Rigidbody2D>();
-            if (!animator)
-                animator = gameObject.GetComponent<Animator>();
         }
 
         #region Protected Functions
@@ -72,27 +70,11 @@ namespace Platformer.Mechanics.General
             if (isStopped)
                 return;
 
-            // Set Direction property to by accurately accessible from outside
-            if (Direction != direction)
-                Direction = direction;
-
-            // Set animation parameters to swap target's sprite to match movement direction
-            if (direction != Vector2.zero)                                                      // check if input changed
-            {
-                animator.SetFloat(Constants.HORIZONTAL, direction.x);
-                animator.SetFloat(Constants.VERTICAL, direction.y);
-            }
-            animator.SetFloat(Constants.MAGNITUDE, direction.magnitude);
-
             currentSpeed = Mathf.Clamp(direction.magnitude, minMovementSpeed, maxMovementSpeed);
             direction.Normalize();
 
             // Mover RigitBody
             body.MovePosition(body.position + direction * currentSpeed * Time.fixedDeltaTime);
-
-            // Move Velocity
-            //body.velocity = direction * currentSpeed * movementSlow;
-
             /// <remarks>
             /// MovePosition is chosen because of the need to stop movement from other scripts
             /// Need to research benifits of both variants to decide if it is worth switching mechanics
@@ -100,18 +82,7 @@ namespace Platformer.Mechanics.General
         }
         #endregion
 
-        public virtual void StopMoving(float time = 0f)
-        {
-            if (time == 0)
-                time = Time.fixedDeltaTime;
-            else if (time == int.MaxValue)
-            {
-                isStopped = true;
-                return;
-            }
 
-            StartCoroutine(Wait(time));
-        }
 
         #region Coroutines
         IEnumerator Wait(float time)

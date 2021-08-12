@@ -186,6 +186,9 @@ namespace Platformer.Mechanics.Character
         // Binds both action to one button
         public void TriggerAndTrack(InputAction.CallbackContext context)
         {
+            if (state == TrackingState.OnCooldown)
+                return;
+
             if (context.performed)
             {
                 if (state == TrackingState.Off)

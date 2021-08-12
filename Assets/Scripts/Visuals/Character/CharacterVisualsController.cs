@@ -10,7 +10,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.Rendering.Universal;
 
-// [add custom usings if needed]
+using Platformer.Mechanics.Character;
+using Platformer.Utils;
 
 namespace Platformer.Visuals.Character
 {
@@ -28,24 +29,36 @@ namespace Platformer.Visuals.Character
      * 
      */
     {
-        [SerializeField] private Light2D light;
+        [SerializeField] private Animator animator;
+        [SerializeField] private Light2D characterLight;
+
+        private Vector2 direction;
 
 
 
         private void Start()
         {
-            if (!light)
-                light = transform.GetChild(0).GetComponent<Light2D>();
-            light.enabled = false;
+            if (!characterLight)
+                characterLight = transform.GetChild(0).GetComponent<Light2D>();
+            characterLight.enabled = false;
         }
 
-        #region Funstions
-        // Turn on and off lights
+        private void Update()
+        {
+            direction = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+
+            if (direction != Vector2.zero)                                                      
+            {
+                animator.SetFloat(Constants.HORIZONTAL, direction.x);
+                animator.SetFloat(Constants.VERTICAL, direction.y);
+            }
+            animator.SetFloat(Constants.MAGNITUDE, direction.magnitude);
+        }
+
         public void ToggleLights(InputAction.CallbackContext context)
         {
             if (context.performed)
-                light.enabled = !light.enabled;
+                characterLight.enabled = !characterLight.enabled;
         }
-        #endregion
     }
 }

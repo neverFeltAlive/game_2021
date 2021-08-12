@@ -89,8 +89,6 @@ namespace Platformer.Mechanics.Character
         private Vector3 direction = new Vector3(1, 0);
 
         private List<Vector2> savedCoordinates;
-
-        private PlayerControls playerControls;
         #endregion
 
         private bool showDebug = true;
@@ -131,9 +129,6 @@ namespace Platformer.Mechanics.Character
             if (!characterBody)
                 characterBody = gameObject.GetComponent<Rigidbody2D>();
 
-            playerControls = new PlayerControls();
-            playerControls.Enable();
-
             dashState = DashState.Ready;
             returnState = ReturnState.InActive;
             OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
@@ -152,7 +147,7 @@ namespace Platformer.Mechanics.Character
         {
             CheckCooldownTriggeringTime();
 
-            Vector2 input = playerControls.MainControls.Walk.ReadValue<Vector2>();
+            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
             if (input.magnitude > minMagnitude)
                 direction = input;
             else if (input.magnitude > .01f)
@@ -266,6 +261,8 @@ namespace Platformer.Mechanics.Character
 
         IEnumerator DashCoroutine(bool isPowerDash = false)
         {
+            yield return new WaitForFixedUpdate();
+
             dashState = DashState.Active;
             OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState , isPower = isPowerDash});
 
@@ -291,6 +288,9 @@ namespace Platformer.Mechanics.Character
 
             characterBody.MovePosition(target);
             savedCoordinates.Add(target);
+
+            yield return new WaitForFixedUpdate();
+
             returnState = ReturnState.Active;
             OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
 
