@@ -287,18 +287,18 @@ namespace Platformer.Mechanics.Character
             */
 
             characterBody.MovePosition(target);
-            savedCoordinates.Add(target);
-
+            
             yield return new WaitForFixedUpdate();
 
+            savedCoordinates.Add(transform.position);
             returnState = ReturnState.Active;
             OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
 
             // DEBUG
             if (showDebug)
             {
-                Debug.DrawLine(transform.position, target);
-                UtilsClass.DrawCross(target, Color.yellow, cooldownTime);
+                Debug.DrawLine(transform.position, transform.position);
+                UtilsClass.DrawCross(transform.position, Color.yellow, cooldownTime);
             }
 
             if (isPowerDash && !overLoad)

@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Intensity: 0.9
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000d1d48e10
+  m_ApplyToSortingLayers: 00000000af47b54cd1d48e1003a29ea6
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -149,8 +149,8 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2517040871686678590}
   m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 277796049
+  m_SortingLayer: 2
   m_SortingOrder: 0
 --- !u!1 &2517040872108294048
 GameObject:
@@ -237,31 +237,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15952137a43d26d43bf1f547e7269b81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitPoints: 100
-  filter:
-    useTriggers: 0
-    useLayerMask: 0
-    useDepth: 0
-    useOutsideDepth: 0
-    useNormalAngle: 0
-    useOutsideNormalAngle: 0
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    minDepth: 0
-    maxDepth: 0
-    minNormalAngle: 0
-    maxNormalAngle: 0
-  movement: {fileID: 2517040872108294049}
   animator: {fileID: 2517040872645554893}
-  immuneTime: 0
+  maxHitPoints: 10
   aimPunchResistance: 1
-  attackDashRange: 1
   attackRange: 0.002
+  attackDashRange: 1
   damage:
-    _amountOfDamage: 1
-    _aimPunch: 0
-    _isInstant: 0
+    amountOfDamage: 0
+    aimPunch: 0
+    isInstant: 0
+    orrigin: {x: 0, y: 0, z: 0}
+  powerAttackDamage:
+    amountOfDamage: 0
+    aimPunch: 0
+    isInstant: 0
+    orrigin: {x: 0, y: 0, z: 0}
   _attackToggleRange: 0
   attackCooldown: 1
 --- !u!114 &2517040872108294049
@@ -277,7 +267,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 2517040872108294052}
-  animator: {fileID: 2517040872645554893}
   maxMovementSpeed: 0.75
   minMovementSpeed: 0
   currentSpeed: 1
@@ -403,7 +392,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -21680
+  m_InstanceId: -106968
 --- !u!95 &2517040872645554893
 Animator:
   serializedVersion: 3
