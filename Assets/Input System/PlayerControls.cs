@@ -15,7 +15,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     ""name"": ""PlayerControls"",
     ""maps"": [
         {
-            ""name"": ""Main  Controls"",
+            ""name"": ""Main Controls"",
             ""id"": ""dfc5b4a5-c5a4-4022-b2c4-f16b66fae66c"",
             ""actions"": [
                 {
@@ -73,6 +73,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Hold""
+                },
+                {
+                    ""name"": ""Toggle Shooting"",
+                    ""type"": ""Button"",
+                    ""id"": ""3defced4-0f57-4748-86b4-8738826d958c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -152,6 +160,82 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""OverLoad"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14f23c2b-d85f-449c-9a27-8d2ea16afed2"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Toggle Shooting"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Shooting Controls"",
+            ""id"": ""f7356702-18d7-4bbd-9727-ade1514a58e4"",
+            ""actions"": [
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""1a7b29ff-b9e3-4d68-a13a-acd7b2c42329"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": ""StickDeadzone"",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""4c893675-32f7-4343-81e6-be2b276285e9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Toggle Shooting"",
+                    ""type"": ""Button"",
+                    ""id"": ""f8739511-1593-4824-ad37-cfb4ae62fbae"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""0e654cbf-dd25-441f-88a0-13a181dba6c7"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""afb16684-dc60-4820-bbeb-0ddcf13583ab"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1d92bcd-c8ce-465e-965b-0ec453314ab6"",
+                    ""path"": ""<Gamepad>/rightStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Toggle Shooting"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -170,8 +254,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     ]
 }");
-        // Main  Controls
-        m_MainControls = asset.FindActionMap("Main  Controls", throwIfNotFound: true);
+        // Main Controls
+        m_MainControls = asset.FindActionMap("Main Controls", throwIfNotFound: true);
         m_MainControls_Walk = m_MainControls.FindAction("Walk", throwIfNotFound: true);
         m_MainControls_Attack = m_MainControls.FindAction("Attack", throwIfNotFound: true);
         m_MainControls_Dash = m_MainControls.FindAction("Dash", throwIfNotFound: true);
@@ -179,6 +263,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_MainControls_Track = m_MainControls.FindAction("Track", throwIfNotFound: true);
         m_MainControls_ToggleLights = m_MainControls.FindAction("Toggle Lights", throwIfNotFound: true);
         m_MainControls_OverLoad = m_MainControls.FindAction("OverLoad", throwIfNotFound: true);
+        m_MainControls_ToggleShooting = m_MainControls.FindAction("Toggle Shooting", throwIfNotFound: true);
+        // Shooting Controls
+        m_ShootingControls = asset.FindActionMap("Shooting Controls", throwIfNotFound: true);
+        m_ShootingControls_Aim = m_ShootingControls.FindAction("Aim", throwIfNotFound: true);
+        m_ShootingControls_Shoot = m_ShootingControls.FindAction("Shoot", throwIfNotFound: true);
+        m_ShootingControls_ToggleShooting = m_ShootingControls.FindAction("Toggle Shooting", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -225,7 +315,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // Main  Controls
+    // Main Controls
     private readonly InputActionMap m_MainControls;
     private IMainControlsActions m_MainControlsActionsCallbackInterface;
     private readonly InputAction m_MainControls_Walk;
@@ -235,6 +325,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_MainControls_Track;
     private readonly InputAction m_MainControls_ToggleLights;
     private readonly InputAction m_MainControls_OverLoad;
+    private readonly InputAction m_MainControls_ToggleShooting;
     public struct MainControlsActions
     {
         private @PlayerControls m_Wrapper;
@@ -246,6 +337,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Track => m_Wrapper.m_MainControls_Track;
         public InputAction @ToggleLights => m_Wrapper.m_MainControls_ToggleLights;
         public InputAction @OverLoad => m_Wrapper.m_MainControls_OverLoad;
+        public InputAction @ToggleShooting => m_Wrapper.m_MainControls_ToggleShooting;
         public InputActionMap Get() { return m_Wrapper.m_MainControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -276,6 +368,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @OverLoad.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnOverLoad;
                 @OverLoad.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnOverLoad;
                 @OverLoad.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnOverLoad;
+                @ToggleShooting.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnToggleShooting;
+                @ToggleShooting.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnToggleShooting;
+                @ToggleShooting.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnToggleShooting;
             }
             m_Wrapper.m_MainControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -301,10 +396,62 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @OverLoad.started += instance.OnOverLoad;
                 @OverLoad.performed += instance.OnOverLoad;
                 @OverLoad.canceled += instance.OnOverLoad;
+                @ToggleShooting.started += instance.OnToggleShooting;
+                @ToggleShooting.performed += instance.OnToggleShooting;
+                @ToggleShooting.canceled += instance.OnToggleShooting;
             }
         }
     }
     public MainControlsActions @MainControls => new MainControlsActions(this);
+
+    // Shooting Controls
+    private readonly InputActionMap m_ShootingControls;
+    private IShootingControlsActions m_ShootingControlsActionsCallbackInterface;
+    private readonly InputAction m_ShootingControls_Aim;
+    private readonly InputAction m_ShootingControls_Shoot;
+    private readonly InputAction m_ShootingControls_ToggleShooting;
+    public struct ShootingControlsActions
+    {
+        private @PlayerControls m_Wrapper;
+        public ShootingControlsActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Aim => m_Wrapper.m_ShootingControls_Aim;
+        public InputAction @Shoot => m_Wrapper.m_ShootingControls_Shoot;
+        public InputAction @ToggleShooting => m_Wrapper.m_ShootingControls_ToggleShooting;
+        public InputActionMap Get() { return m_Wrapper.m_ShootingControls; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ShootingControlsActions set) { return set.Get(); }
+        public void SetCallbacks(IShootingControlsActions instance)
+        {
+            if (m_Wrapper.m_ShootingControlsActionsCallbackInterface != null)
+            {
+                @Aim.started -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnAim;
+                @Shoot.started -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnShoot;
+                @Shoot.performed -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnShoot;
+                @Shoot.canceled -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnShoot;
+                @ToggleShooting.started -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnToggleShooting;
+                @ToggleShooting.performed -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnToggleShooting;
+                @ToggleShooting.canceled -= m_Wrapper.m_ShootingControlsActionsCallbackInterface.OnToggleShooting;
+            }
+            m_Wrapper.m_ShootingControlsActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
+                @ToggleShooting.started += instance.OnToggleShooting;
+                @ToggleShooting.performed += instance.OnToggleShooting;
+                @ToggleShooting.canceled += instance.OnToggleShooting;
+            }
+        }
+    }
+    public ShootingControlsActions @ShootingControls => new ShootingControlsActions(this);
     private int m_GamepadSchemeIndex = -1;
     public InputControlScheme GamepadScheme
     {
@@ -323,5 +470,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnTrack(InputAction.CallbackContext context);
         void OnToggleLights(InputAction.CallbackContext context);
         void OnOverLoad(InputAction.CallbackContext context);
+        void OnToggleShooting(InputAction.CallbackContext context);
+    }
+    public interface IShootingControlsActions
+    {
+        void OnAim(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
+        void OnToggleShooting(InputAction.CallbackContext context);
     }
 }

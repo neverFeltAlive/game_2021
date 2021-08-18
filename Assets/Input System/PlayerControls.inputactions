@@ -2,7 +2,7 @@
     "name": "PlayerControls",
     "maps": [
         {
-            "name": "Main  Controls",
+            "name": "Main Controls",
             "id": "dfc5b4a5-c5a4-4022-b2c4-f16b66fae66c",
             "actions": [
                 {
@@ -60,6 +60,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Hold"
+                },
+                {
+                    "name": "Toggle Shooting",
+                    "type": "Button",
+                    "id": "3defced4-0f57-4748-86b4-8738826d958c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -137,6 +145,82 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "OverLoad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14f23c2b-d85f-449c-9a27-8d2ea16afed2",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Toggle Shooting",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Shooting Controls",
+            "id": "f7356702-18d7-4bbd-9727-ade1514a58e4",
+            "actions": [
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "1a7b29ff-b9e3-4d68-a13a-acd7b2c42329",
+                    "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone",
+                    "interactions": ""
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "4c893675-32f7-4343-81e6-be2b276285e9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Toggle Shooting",
+                    "type": "Button",
+                    "id": "f8739511-1593-4824-ad37-cfb4ae62fbae",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0e654cbf-dd25-441f-88a0-13a181dba6c7",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "afb16684-dc60-4820-bbeb-0ddcf13583ab",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e1d92bcd-c8ce-465e-965b-0ec453314ab6",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Toggle Shooting",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

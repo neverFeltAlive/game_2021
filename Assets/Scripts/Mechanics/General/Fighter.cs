@@ -32,14 +32,6 @@ namespace Platformer.Mechanics.General
      * 
      */
     {
-        public enum PowerAttackState
-        {
-            Ready,
-            Active
-        }
-
-
-
         public static event EventHandler<OnAttackEventArgs> OnAttack;
         public class OnAttackEventArgs : EventArgs
         {
@@ -69,9 +61,9 @@ namespace Platformer.Mechanics.General
         #endregion
 
         #region Private Fields
+        private int currentHitPoints;
+
         protected string targetTag = Constants.FRIENDLY_TAG;                            // objects with wich tag to target
-        
-        private int currentHitPoints;                
         #endregion
 
         private bool showDebug = true;
@@ -97,7 +89,7 @@ namespace Platformer.Mechanics.General
         }
         #endregion
 
-        #region Protected Functions
+        #region Functions
         protected virtual void HandleAttack(Vector3 direction, bool isPower = false)
         {
             Damage dmg = isPower ? powerAttackDamage : damage;
@@ -141,6 +133,7 @@ namespace Platformer.Mechanics.General
         }
         #endregion
 
+        #region Methods
         private Vector3 RotateVector(Vector3 normalizedVector, int angle)
         {
             float sin = Mathf.Sin(angle);
@@ -192,11 +185,14 @@ namespace Platformer.Mechanics.General
             /// from the target to the end of direction vector is less than the distance from the attacker to the end of direction vector
             /// </summary>
         }
+        #endregion
 
 
 
         protected IEnumerator PowerAttack(Vector3 direction)
         {
+            OnAttack?.Invoke(this, new OnAttackEventArgs { isPower = true });
+
             yield return new WaitForFixedUpdate();
             gameObject.GetComponent<Rigidbody2D>().MovePosition(transform.position + direction.normalized * attackDashRange);
             

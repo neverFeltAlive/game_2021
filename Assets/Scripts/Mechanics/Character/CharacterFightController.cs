@@ -75,6 +75,7 @@ namespace Platformer.Mechanics.Character
         }
         #endregion
 
+        #region Functions
         public void TriggerAttack(InputAction.CallbackContext context)
         {
             if (context.interaction is HoldInteraction)
@@ -99,5 +100,6 @@ namespace Platformer.Mechanics.Character
             else
                 overLoad = false;
         }
+        #endregion
     }
 }

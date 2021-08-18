@@ -1,6 +1,7 @@
 /// <remarks>
 /// 
-/// CharacterVisualsController is used for [short description]
+/// CharacterVisualsController is used for controlling all visual parts of the character.
+/// Animation, lights and etc.
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -31,8 +32,12 @@ namespace Platformer.Visuals.Character
     {
         [SerializeField] private Animator animator;
         [SerializeField] private Light2D characterLight;
+        [Space]
+        [SerializeField] private Color32 defaultColor;
+        [SerializeField] private Color32 shootingColor;
 
         private Vector2 direction;
+        private PlayerInput playerInput;
 
 
 
@@ -41,24 +46,45 @@ namespace Platformer.Visuals.Character
             if (!characterLight)
                 characterLight = transform.GetChild(0).GetComponent<Light2D>();
             characterLight.enabled = false;
+
+            playerInput = GetComponent<PlayerInput>();
         }
 
         private void Update()
         {
-            direction = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+            if (playerInput.currentActionMap.name == Constants.DEFAULT_MAP)
+            {
+                direction = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+                animator.SetFloat(Constants.MAGNITUDE, direction.magnitude);
+            }
+            else
+            {
+                direction = CharacterMovementController.playerControls.ShootingControls.Aim.ReadValue<Vector2>();
+                animator.SetFloat(Constants.MAGNITUDE, 0f);
+            }
 
             if (direction != Vector2.zero)                                                      
             {
                 animator.SetFloat(Constants.HORIZONTAL, direction.x);
                 animator.SetFloat(Constants.VERTICAL, direction.y);
             }
-            animator.SetFloat(Constants.MAGNITUDE, direction.magnitude);
         }
 
         public void ToggleLights(InputAction.CallbackContext context)
         {
             if (context.performed)
                 characterLight.enabled = !characterLight.enabled;
+        }
+
+        public void ChangeLightColor(InputAction.CallbackContext context)
+        {
+/*            if (!context.canceled)
+                return;
+
+            if (characterLight.color == shootingColor)
+                characterLight.color = defaultColor;
+            else
+                characterLight.color = shootingColor;*/
         }
     }
 }

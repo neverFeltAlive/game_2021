@@ -58,9 +58,9 @@ namespace Platformer.Mechanics.Character
         private OverLoadState overLoadState;
 
         private Vector2 direction;
+        #endregion
 
         public static PlayerControls playerControls;
-        #endregion
 
 
 
@@ -86,6 +86,7 @@ namespace Platformer.Mechanics.Character
 
             DashController.OnDashStateChanged += DashHandler;
             TrackController.OnTrack += TrackHandler;
+            CharacterFightController.OnAttack += PowerAttackHandler;
 
             overLoadState = OverLoadState.InActive;
         }
@@ -98,6 +99,7 @@ namespace Platformer.Mechanics.Character
         #endregion
 
         #region Functions
+        #region Event Handlers
         private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
         {
             if (args.state == DashController.DashState.Active)
@@ -111,12 +113,23 @@ namespace Platformer.Mechanics.Character
             StartCoroutine(DisableMovement(args.castingTime));
         }
 
+        private void ShowState(object sender, OnOverLoadStateChangeEventArgs args) =>
+            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
+
+        private void PowerAttackHandler(object sender, Fighter.OnAttackEventArgs args)
+        {
+            if (args.isPower)
+                isStopped = true;
+            else
+                isStopped = false;
+        }
+        #endregion
+
+        #region Input Actions Handlers
         public void StopMovementForInteraction(InputAction.CallbackContext context)
         {
             if (context.started)
                 isStopped = true;
-            else if (context.canceled)
-                isStopped = false;
         }
 
         public void OverLoad(InputAction.CallbackContext context)
@@ -136,9 +149,7 @@ namespace Platformer.Mechanics.Character
                 }
             }
         }
-
-        private void ShowState(object sender, OnOverLoadStateChangeEventArgs args) =>
-            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
+        #endregion
         #endregion
 
 
