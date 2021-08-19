@@ -12,6 +12,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 
 using Platformer.Mechanics.General;
+using Platformer.Mechanics.Objects;
 using Platformer.Utils;
 
 namespace Platformer.Mechanics.Character
@@ -30,8 +31,36 @@ namespace Platformer.Mechanics.Character
      * 
      */
     {
+        public enum FightState
+        {
+            Shooting,
+            Normal
+        }
+
+
+
+        public static event EventHandler OnShoot;
+        public static event EventHandler<OnFightStateChangedEventArgs> OnFightStateChanged;
+        public class OnFightStateChangedEventArgs : EventArgs
+        {
+            public FightState state;
+        }
+
+
+
+        #region Serialized Fields
+        [Space]
+        [Header("Shooting Stats")]
+        [SerializeField] private GameObject crosshair;
+        [SerializeField] private float shootingRange = 1f;
+        #endregion
+
         #region Priavte Fields
         private bool overLoad = true;
+
+        private float lastStopTime;
+
+        private FightState state;
 
         private Vector3 direction;
         #endregion
@@ -48,8 +77,10 @@ namespace Platformer.Mechanics.Character
             attackRange = .2f;
             attackDashRange = .2f;
 
-            damage = new Damage(amount: 1,  punch: .25f, instant: true);
-            powerAttackDamage = new Damage(amount: 2,  punch: 1f, instant: true);
+            damage = new Damage(amount: 1,  punch: 2f, instant: true);
+            powerAttackDamage = new Damage(amount: 2,  punch: 5f, instant: true);
+
+            shootingRange = 1f;
         }
         #endregion
 
@@ -58,26 +89,60 @@ namespace Platformer.Mechanics.Character
         {
             base.Start();
 
-            targetTag = Constants.ENEMY_TAG;
-
             CharacterMovementController.OnOverLoadStateChange += OverLoadHandler;
 
+            crosshair.SetActive(false);
+            targetTag = Constants.ENEMY_TAG;
             overLoad = false;
+            state = FightState.Normal;
         }
 
         protected sealed override void Update()
         {
             base.Update();
 
-            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
-            if (input != Vector2.zero)
-                direction = input;
+            switch (state)
+            {
+                case FightState.Normal:
+                    Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+                    if (input != Vector2.zero)
+                        direction = input;
+                    break;
+
+                case FightState.Shooting:
+                    if (GetComponent<CharacterMovementController>().IsMoving())
+                        crosshair.SetActive(false);
+                    else
+                    {
+                        input = CharacterMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
+                        if (input.magnitude > .5f)
+                        {
+                            input.Normalize();
+                            crosshair.SetActive(true);
+                            crosshair.transform.localPosition = input * .1f;
+                            direction = input;
+                        }
+                    }
+                    break;
+            }
         }
         #endregion
 
         #region Functions
+        private void OverLoadHandler(object sender, CharacterMovementController.OnOverLoadStateChangeEventArgs args)
+        {
+            if (args.state == CharacterMovementController.OverLoadState.Active)
+                overLoad = true;
+            else
+                overLoad = false;
+        }
+
+        #region Input Actions Handlers
         public void TriggerAttack(InputAction.CallbackContext context)
         {
+            if (state == FightState.Shooting)
+                return;
+
             if (context.interaction is HoldInteraction)
             {
                 if (context.performed)
@@ -93,13 +158,49 @@ namespace Platformer.Mechanics.Character
             }
         }
 
-        private void OverLoadHandler(object sender, CharacterMovementController.OnOverLoadStateChangeEventArgs args)
+        public void Shoot(InputAction.CallbackContext context)
         {
-            if (args.state == CharacterMovementController.OverLoadState.Active)
-                overLoad = true;
-            else
-                overLoad = false;
+            if (state == FightState.Normal)
+                return;
+
+            if (GetComponent<CharacterMovementController>().IsMoving())
+                return;
+
+            if (context.canceled)
+            {
+                Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=green> Shoot: </color></size>");
+                OnShoot?.Invoke(this, EventArgs.Empty);
+
+                if (showDebug) Debug.DrawLine(crosshair.transform.position, crosshair.transform.position + direction.normalized * shootingRange, Color.red, .5f);
+
+                RaycastHit2D hit = Physics2D.Raycast(crosshair.transform.position, direction.normalized, shootingRange);
+                if (hit)
+                {
+                    if (hit.transform.tag == targetTag)
+                        hit.transform.SendMessage("TakeDamage", damage);
+                }
+            }
         }
+
+        public void ToggleShooting(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                switch (state)
+                {
+                    case FightState.Shooting:
+                        state = FightState.Normal;
+                        crosshair.SetActive(false);
+                        break;
+                    case FightState.Normal:
+                        state = FightState.Shooting;
+                        break;
+                }
+
+                OnFightStateChanged?.Invoke(this, new OnFightStateChangedEventArgs { state = state });
+            }
+        }
+        #endregion
         #endregion
     }
 }

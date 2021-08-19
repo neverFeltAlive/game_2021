@@ -7,6 +7,7 @@
 /// </remarks>
 
 
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.Rendering.Universal;
@@ -30,44 +31,88 @@ namespace Platformer.Visuals.Character
      * 
      */
     {
+        #region Serialized Fields
         [SerializeField] private Animator animator;
+        [SerializeField] private GameObject dashEffect;
         [SerializeField] private Light2D characterLight;
         [Space]
-        [SerializeField] private Color32 defaultColor;
-        [SerializeField] private Color32 shootingColor;
+        [SerializeField] private RuntimeAnimatorController normalAnimator;
+        [SerializeField] private RuntimeAnimatorController shootingAnimator;
+        #endregion
 
         private Vector2 direction;
-        private PlayerInput playerInput;
 
 
 
+        #region MonoBehaviour Callbacks
         private void Start()
         {
             if (!characterLight)
                 characterLight = transform.GetChild(0).GetComponent<Light2D>();
             characterLight.enabled = false;
 
-            playerInput = GetComponent<PlayerInput>();
+            CharacterFightController.OnAttack += AttackHandler;
+            CharacterFightController.OnFightStateChanged += FightStateChangeHaandler;
+            CharacterFightController.OnShoot += ShootHandler;
+            DashController.OnDashStateChanged += DashHandler;
         }
 
         private void Update()
         {
-            if (playerInput.currentActionMap.name == Constants.DEFAULT_MAP)
-            {
-                direction = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
-                animator.SetFloat(Constants.MAGNITUDE, direction.magnitude);
-            }
-            else
-            {
-                direction = CharacterMovementController.playerControls.ShootingControls.Aim.ReadValue<Vector2>();
-                animator.SetFloat(Constants.MAGNITUDE, 0f);
-            }
+            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
 
-            if (direction != Vector2.zero)                                                      
+            if (GetComponent<CharacterMovementController>().IsMoving())
+                animator.SetFloat(Constants.MAGNITUDE, input.magnitude);
+
+            if (input == Vector2.zero)
+                input = CharacterMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
+
+            if (input != Vector2.zero)                                                      
             {
+                direction = input;
                 animator.SetFloat(Constants.HORIZONTAL, direction.x);
                 animator.SetFloat(Constants.VERTICAL, direction.y);
             }
+        }
+        #endregion
+
+        #region Functions
+        #region Event Handlers
+        private void FightStateChangeHaandler(object sender, CharacterFightController.OnFightStateChangedEventArgs args)
+        {
+            if (args.state == CharacterFightController.FightState.Normal)
+                animator.runtimeAnimatorController = normalAnimator;
+            else
+                animator.runtimeAnimatorController = shootingAnimator;
+        }
+
+        private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
+        {
+            if (args.state == DashController.DashState.Active)
+            {
+                float angle = Mathf.Atan2(-direction.normalized.y, -direction.normalized.x) * Mathf.Rad2Deg;
+                dashEffect.transform.eulerAngles = new Vector3(0f, 0f, angle);
+                dashEffect.GetComponent<Animator>().SetTrigger(Constants.DASH);
+            }
+        }
+
+        private void AttackHandler(object sender, CharacterFightController.OnAttackEventArgs args)
+        {
+            if (!args.isPower)
+                animator.SetTrigger(Constants.ATTACK);
+        }
+
+        private void ShootHandler(object sender, EventArgs args)
+        {
+            animator.SetTrigger(Constants.ATTACK);
+        }
+        #endregion
+
+        #region Input Actions Handlers
+        public void RollHandler(InputAction.CallbackContext context)
+        {
+            if (context.canceled)
+                animator.SetTrigger(Constants.ROLL);
         }
 
         public void ToggleLights(InputAction.CallbackContext context)
@@ -75,16 +120,7 @@ namespace Platformer.Visuals.Character
             if (context.performed)
                 characterLight.enabled = !characterLight.enabled;
         }
-
-        public void ChangeLightColor(InputAction.CallbackContext context)
-        {
-/*            if (!context.canceled)
-                return;
-
-            if (characterLight.color == shootingColor)
-                characterLight.color = defaultColor;
-            else
-                characterLight.color = shootingColor;*/
-        }
+        #endregion
+        #endregion
     }
 }

@@ -14,6 +14,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Roll",
+                    "type": "Button",
+                    "id": "726ca37e-0d29-483b-a5f3-7ddbfc6d9b52",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Attack",
                     "type": "Button",
                     "id": "9716aa27-71d0-46aa-bd9e-1ba62dd985cb",
@@ -46,14 +54,6 @@
                     "interactions": "Hold(duration=0.75)"
                 },
                 {
-                    "name": "Toggle Lights",
-                    "type": "Button",
-                    "id": "35e150a2-a405-40bc-a4a4-f871f5da9318",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Hold(duration=0.75)"
-                },
-                {
                     "name": "OverLoad",
                     "type": "Button",
                     "id": "45eb2b92-a57c-4c27-b54b-c1c2fee76dc3",
@@ -68,6 +68,30 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "24c7558f-2d2c-4e8e-9737-769b592f9ea7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "233fea56-f609-4187-aca0-e8e6229283f0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Toggle Lights",
+                    "type": "Button",
+                    "id": "35e150a2-a405-40bc-a4a4-f871f5da9318",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold(duration=0.75)"
                 }
             ],
             "bindings": [
@@ -128,23 +152,34 @@
                 },
                 {
                     "name": "",
-                    "id": "78f63652-954b-4bf5-8f93-ad70687453ed",
-                    "path": "<Gamepad>/leftStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Toggle Lights",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "036cc2ed-639d-429b-957a-c1dda2180a5b",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "OverLoad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f695fc2a-1fee-441a-b05e-d72888e55c53",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3e81733a-3cd6-4350-a232-1ec1c13679a5",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": "Gamepad",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -158,69 +193,26 @@
                     "action": "Toggle Shooting",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Shooting Controls",
-            "id": "f7356702-18d7-4bbd-9727-ade1514a58e4",
-            "actions": [
-                {
-                    "name": "Aim",
-                    "type": "Value",
-                    "id": "1a7b29ff-b9e3-4d68-a13a-acd7b2c42329",
-                    "expectedControlType": "Vector2",
-                    "processors": "StickDeadzone",
-                    "interactions": ""
                 },
-                {
-                    "name": "Shoot",
-                    "type": "Button",
-                    "id": "4c893675-32f7-4343-81e6-be2b276285e9",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Toggle Shooting",
-                    "type": "Button",
-                    "id": "f8739511-1593-4824-ad37-cfb4ae62fbae",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                }
-            ],
-            "bindings": [
                 {
                     "name": "",
-                    "id": "0e654cbf-dd25-441f-88a0-13a181dba6c7",
-                    "path": "<Gamepad>/rightStick",
+                    "id": "78f63652-954b-4bf5-8f93-ad70687453ed",
+                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Aim",
+                    "action": "Toggle Lights",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "afb16684-dc60-4820-bbeb-0ddcf13583ab",
-                    "path": "<Gamepad>/rightTrigger",
+                    "id": "91582631-8ea0-4969-8fa3-77d858c21da0",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e1d92bcd-c8ce-465e-965b-0ec453314ab6",
-                    "path": "<Gamepad>/rightStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Toggle Shooting",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -61,35 +61,35 @@ namespace Platformer.Camera
 
                 // Changing boarders if needed
                 if (maxX != 0)
-                    camera.MaxX = maxX;
+                    camera.maxX = maxX;
                 if (minX != 0)
-                    camera.MinX = minX;
+                    camera.minX = minX;
                 if (maxY != 0)
-                    camera.MaxY = maxY;
+                    camera.maxY = maxY;
                 if (minY != 0)
-                    camera.MinY = minY;
+                    camera.minY = minY;
 
                 // Change offset if needed
                 if (xOffset != 0)
                 {
-                    savedXOffset = camera.XOffset;
+                    savedXOffset = camera.xOffset;
 
                     // Make sure only works one way
                     if (xOffset > 0 && gameObject.transform.position.x > collision.transform.position.x)
-                        camera.XOffset = xOffset;
+                        camera.xOffset = xOffset;
                     if (xOffset < 0 && gameObject.transform.position.x < collision.transform.position.x)
-                        camera.XOffset = xOffset;
+                        camera.xOffset = xOffset;
                 }
                 if (yOffset != 0)
                 {
-                    savedYOffset = camera.XOffset;
+                    savedYOffset = camera.yOffset;
 
                     // Make sure only works one way
                     if (yOffset > 0 && gameObject.transform.position.y > collision.transform.position.y)
-                        camera.YOffset = yOffset;
+                        camera.yOffset = yOffset;
 
                     if (yOffset < 0 && gameObject.transform.position.y < collision.transform.position.y)
-                        camera.YOffset = yOffset;
+                        camera.yOffset = yOffset;
                 }
             }
         }
@@ -101,8 +101,8 @@ namespace Platformer.Camera
                 CameraController camera = collision.GetComponent<CameraController>();
 
                 // Restore offset
-                camera.XOffset = savedXOffset;
-                camera.YOffset = savedYOffset;
+                camera.xOffset = savedXOffset;
+                camera.yOffset = savedYOffset;
             }
         }
         #endregion

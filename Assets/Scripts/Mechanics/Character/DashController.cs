@@ -68,11 +68,11 @@ namespace Platformer.Mechanics.Character
         [Space]
         [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force")] private float multiplier = .45f;
         [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Minimum value for the input to be changed")] private float minMagnitude = .45f;
-        [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 3;
+        [SerializeField] [Range(0f, 100f)] [Tooltip("Minimum value for the input to be changed")] private float minMagnitude = .6f;
+        [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
         [Space]
         [Header("Cooldown settings")]
-        [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 5f;
+        [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time after every return in seconds")] private float returnCooldownTime = 2f;
         [SerializeField] [Range(0f, 10f)] [Tooltip("Dash cooldown time after last return in seconds")] private float lastReturnCooldownTime = .5f;
         [SerializeField] [Range(.1f, 5f)] [Tooltip("Time  after one dash untill coldown is triggered")] private float cooldownTriggeringTime = .8f;
@@ -107,20 +107,14 @@ namespace Platformer.Mechanics.Character
 
             multiplier = .45f;
             overLoadMultiplier = 1f;
-            minMagnitude = .45f;
-            maxNumberOfDashes = 3;
+            minMagnitude = .6f;
+            maxNumberOfDashes = 5;
 
-            cooldownTime = 5f;
+            cooldownTime = 3f;
             returnCooldownTime = 2f;
             lastReturnCooldownTime = .5f;
             cooldownTriggeringTime = .8f;
         }   
-        [ContextMenu("AddForce Variation of Dash")]
-        private void AddForceDash()
-        {
-            GetComponent<Rigidbody2D>().drag = 15;
-            multiplier = 10f;
-        }
         #endregion
 
         #region MonoBehaviour Callbacks
@@ -261,12 +255,8 @@ namespace Platformer.Mechanics.Character
 
         IEnumerator DashCoroutine(bool isPowerDash = false)
         {
-            yield return new WaitForFixedUpdate();
-
             dashState = DashState.Active;
             OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState , isPower = isPowerDash});
-
-            yield return new WaitForFixedUpdate();
 
             Vector2 target;
             if (isPowerDash)
@@ -274,20 +264,12 @@ namespace Platformer.Mechanics.Character
             else
                 target = transform.position + direction * multiplier;
 
-            /*          AddForce variation 
-             *          
-             *          if (isPowerDash)
-             *              characterBody.AddForce(direction * multiplier * 2, ForceMode2D.Impulse);
-             *          else
-             *              characterBody.AddForce(direction * multiplier, ForceMode2D.Impulse);
-             *          
-             *          yield return new WaitForFixedUpdate();
-             *          while (Mathf.Abs(characterBody.velocity.x) >= .25f && Mathf.Abs(characterBody.velocity.y) >= .25f)
-             *              yield return new WaitForFixedUpdate();
-            */
-
             characterBody.MovePosition(target);
             
+            // DEBUG
+            if (showDebug)
+                Debug.DrawLine(transform.position, target, Color.yellow, .125f);
+
             yield return new WaitForFixedUpdate();
 
             savedCoordinates.Add(transform.position);
@@ -296,10 +278,7 @@ namespace Platformer.Mechanics.Character
 
             // DEBUG
             if (showDebug)
-            {
-                Debug.DrawLine(transform.position, transform.position);
                 UtilsClass.DrawCross(transform.position, Color.yellow, cooldownTime);
-            }
 
             if (isPowerDash && !overLoad)
                 StartCoroutine(Cooldown(cooldownTime));
@@ -314,6 +293,10 @@ namespace Platformer.Mechanics.Character
                 }
             }
         }
+        /// <remarks>
+        /// Dash is implemented as a coroutine because of the need to save coordinates
+        /// We cannot save target location before moving to that location as we need to check if there are any colliders on the way
+        /// </remarks>
         #endregion
     }
 }

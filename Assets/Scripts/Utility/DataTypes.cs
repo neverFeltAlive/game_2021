@@ -6,8 +6,6 @@
 /// </remarks>
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // [add custom usings if needed]
@@ -30,6 +28,8 @@ namespace Platformer.Utils
 
         // Animation parameters
         public const string ATTACK = "Attack";                                                          // triggers attack
+        public const string ROLL = "Roll";                                                              // triggers roll
+        public const string DASH = "Dash";                                                              // triggers dash
         public const string HORIZONTAL = "Horizontal";                                                  // holds name of animator parameter
         public const string VERTICAL = "Vertical";                                                      // holds name of animator parameter
         public const string MAGNITUDE = "Magnitude";                                                    // holds name of animator parameter

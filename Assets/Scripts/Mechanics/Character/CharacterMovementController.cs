@@ -35,8 +35,15 @@ namespace Platformer.Mechanics.Character
             OnCooldown
         }
 
+        public enum RollState
+        {
+            Active,
+            Ready
+        }
 
 
+
+        public static event EventHandler OnRoll;
         public static event EventHandler<OnOverLoadStateChangeEventArgs> OnOverLoadStateChange;
         public class OnOverLoadStateChangeEventArgs : EventArgs
         {
@@ -52,10 +59,15 @@ namespace Platformer.Mechanics.Character
         [Header("OverLoad Stats")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Time overload remains active after casting")] private float overLoadTime = 5f;
         [SerializeField] [Range(10f, 100f)] private float overLoadCooldownTime = 30f;
+        [Space]
+        [Header("Roll Stats")]
+        [SerializeField] private float rollSpeed;
+        [SerializeField] private float rollSpeedDrop;
         #endregion
 
         #region Private Fields
         private OverLoadState overLoadState;
+        private RollState rollState;
 
         private Vector2 direction;
         #endregion
@@ -86,15 +98,29 @@ namespace Platformer.Mechanics.Character
 
             DashController.OnDashStateChanged += DashHandler;
             TrackController.OnTrack += TrackHandler;
-            CharacterFightController.OnAttack += PowerAttackHandler;
 
             overLoadState = OverLoadState.InActive;
+            rollState = RollState.Ready;
         }
 
-        private void Update() =>
-            direction = playerControls.MainControls.Walk.ReadValue<Vector2>();
+        private void Update()
+        {
+            switch (rollState)
+            {
+                case RollState.Ready:
+                    direction = playerControls.MainControls.Walk.ReadValue<Vector2>();
+                    currentSpeed = Mathf.Clamp(direction.magnitude, minMovementSpeed, maxMovementSpeed);
+                    break;
 
-        protected void FixedUpdate() =>
+                case RollState.Active:
+                    currentSpeed -= rollSpeed * rollSpeedDrop * Time.deltaTime;
+                    if (currentSpeed <= 1f)
+                        rollState = RollState.Ready;
+                    break;
+            }
+        }
+
+        private void FixedUpdate() =>
             Move(direction);
         #endregion
 
@@ -130,6 +156,8 @@ namespace Platformer.Mechanics.Character
         {
             if (context.started)
                 isStopped = true;
+            if (context.canceled)
+                isStopped = false;
         }
 
         public void OverLoad(InputAction.CallbackContext context)
@@ -149,8 +177,30 @@ namespace Platformer.Mechanics.Character
                 }
             }
         }
+
+        public void Roll(InputAction.CallbackContext context)
+        {
+            if (rollState == RollState.Ready)
+            {
+                if (context.canceled)
+                {
+                    currentSpeed = rollSpeed;
+
+                    OnRoll?.Invoke(this, EventArgs.Empty);
+                    rollState = RollState.Active;
+                }
+            }
+        }
         #endregion
         #endregion
+
+        public bool IsMoving()
+        {
+            if (body.velocity == Vector2.zero)
+                return false;
+            else
+                return true;
+        }
 
 
 

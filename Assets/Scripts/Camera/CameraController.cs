@@ -6,11 +6,12 @@
 /// </remarks>
 
 
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Platformer.Utils;
+using Platformer.Mechanics.Character;
 
 namespace Platformer.Camera
 {
@@ -28,7 +29,13 @@ namespace Platformer.Camera
      * 
      */
     {
-        // Fields
+        public enum CameraState
+        {
+            Normal,
+            Shaking
+        }
+
+
 
         #region Serialized Fields
         [Header("Links")]
@@ -38,69 +45,125 @@ namespace Platformer.Camera
 
         [Header("Variables")]
         [SerializeField] [Range(0f, 2f)] [Tooltip("Time since the begining of player movement when camera starts following")] private float timeOffset = 0.25f;
-        [SerializeField] [Tooltip("Required difference between coordinates on z axis")] private float _zOffset = -10f;
-        [SerializeField] [Tooltip("Required difference between coordinates on x axis")] private float _xOffset = 0f;
-        [SerializeField] [Tooltip("Required difference between coordinates on y axis")] private float _yOffset = 0f;
         #endregion
 
         #region Private Fields
-        private float _maxX = 0f;
-        private float _minX = 0f;
-        private float _maxY = 0f;
-        private float _minY = 0f;
+        private float currentTimeOffset;
+        private float currentXOffset;
+        private float currentYOffset;
+        private float currentZOffset;
+
+        private CameraState state;
 
         private Vector3 velocity = Vector3.zero;
         #endregion
 
-        #region Properties
-        [HideInInspector]
-        public float XOffset { get { return _xOffset; } set { _xOffset = value; } }        
-        [HideInInspector]
-        public float YOffset { get { return _yOffset; } set { _yOffset = value; } }
-        [HideInInspector]
-        public float MaxX { get { return _maxX; } set { _maxX = value; } }
-        [HideInInspector]
-        public float MinX { get { return _minX; } set { _minX = value; } }
-        [HideInInspector]
-        public float MaxY { get { return _maxY; } set { _maxY = value; } }
-        [HideInInspector]
-        public float MinY { get { return _minY; } set { _minY = value; } }
+        #region Public Fields
+        public float maxX = 0f;
+        public float minX = 0f;
+        public float maxY = 0f;
+        public float minY = 0f;
+        public float zOffset = -10f;
+        public float xOffset = 0f;
+        public float yOffset = 0f;
         #endregion
 
-        // Functions 
+
 
         #region MonoBehaviour Callbacks
-        // When the script is enabled
         private void Start()
         {
-            // Check required variables for assignment
             if (!target)
                 target = GameObject.Find(Constants.CHARACTER_NAME).transform;
+
+            DashController.OnDashStateChanged += DashHandler;
+            CharacterFightController.OnShoot += ShootHandler;
+
+            ResetValues();
         }
 
-        // Every fixed time period
         private void FixedUpdate()
         {
             Vector3 targetPosition = new Vector3(target.position.x, target.position.y, 0f);
             
             // Check for boarders
-            if (target.position.x > MaxX)
-                targetPosition.x = MaxX != 0 ? MaxX : targetPosition.x;
-            if (target.position.x < MinX)
-                targetPosition.x = MinX != 0 ? MinX : targetPosition.x;
-            if (target.position.y > MaxY)
-                targetPosition.y = MaxY != 0 ? MaxY : targetPosition.y;
-            if (target.position.y < MinY)
-                targetPosition.y = MinY != 0 ? MinY : targetPosition.y;
+            if (target.position.x > maxX)
+                targetPosition.x = maxX != 0 ? maxX : targetPosition.x;
+            if (target.position.x < minX)
+                targetPosition.x = minX != 0 ? minX : targetPosition.x;
+            if (target.position.y > maxY)
+                targetPosition.y = maxY != 0 ? maxY : targetPosition.y;
+            if (target.position.y < minY)
+                targetPosition.y = minY != 0 ? minY : targetPosition.y;
 
             // Check for offset 
-            if (XOffset != 0)
-                targetPosition.x += XOffset;
-            if (YOffset != 0)
-                targetPosition.y += YOffset;
+            if (currentXOffset != 0)
+                targetPosition.x += currentXOffset;
+            if (currentYOffset != 0)
+                targetPosition.y += currentYOffset;
 
             // Smooth following
-            cameraTransform.position = Vector3.SmoothDamp(cameraTransform.position, targetPosition + new Vector3(0f, 0f, _zOffset), ref velocity, timeOffset);
+            cameraTransform.position = Vector3.SmoothDamp(cameraTransform.position, targetPosition + new Vector3(0f, 0f, currentZOffset), ref velocity, currentTimeOffset);
+        }
+        #endregion
+
+        #region Functions
+        private void ResetValues()
+        {
+            currentTimeOffset = timeOffset;
+            currentXOffset = xOffset;
+            currentYOffset = yOffset;
+            currentZOffset = zOffset;
+            state = CameraState.Normal;
+        }
+
+        private void ShakeCam(float duration = .3f, float magnitude = .005f)
+        {
+            if (state == CameraState.Shaking)
+                StopAllCoroutines();
+
+            StartCoroutine(Shake(duration, magnitude));
+
+        }
+
+        #region Event Handlers
+        private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
+        {
+            if (args.state == DashController.DashState.Active)
+            {
+                if (args.isPower)
+                    ShakeCam(.5f, .05f);
+                else
+                    ShakeCam();
+            }
+        }
+
+        private void ShootHandler(object sender, EventArgs args)
+        {
+            ShakeCam(.1f, .01f);
+        }
+        #endregion
+        #endregion
+
+
+
+        #region Coroutines
+        IEnumerator Shake(float duration = .3f, float magnitude = .005f)
+        {
+            state = CameraState.Shaking;
+            currentTimeOffset = 0f;
+
+            while (duration > 0f)
+            {
+                duration -= Time.fixedDeltaTime;
+
+                currentXOffset = UnityEngine.Random.Range(-1f, 1f) * magnitude;
+                currentYOffset = UnityEngine.Random.Range(-1f, 1f) * magnitude;
+
+                yield return new WaitForFixedUpdate();
+            }
+
+            ResetValues();
         }
         #endregion
     }

@@ -43,6 +43,7 @@ namespace Platformer.Mechanics.General
 
         protected bool isStopped = false;
 
+        #region Public Fields
         [HideInInspector] public float currentSpeed = 1f;
         [HideInInspector] public float movementSlow = 1f;
         /// <remarks>
@@ -50,6 +51,7 @@ namespace Platformer.Mechanics.General
         /// </remarks>
 
         public Vector2 Direction { get; protected set; }
+        #endregion
 
 
 
@@ -68,16 +70,14 @@ namespace Platformer.Mechanics.General
         {
             // Check if movement is allowed
             if (isStopped)
+            {
+                body.velocity = direction.normalized * .01f;
                 return;
+            }
 
-            currentSpeed = Mathf.Clamp(direction.magnitude, minMovementSpeed, maxMovementSpeed);
-            direction.Normalize();
-
-            // Mover RigitBody
-            body.MovePosition(body.position + direction * currentSpeed * Time.fixedDeltaTime);
+            body.velocity = direction.normalized * currentSpeed;
             /// <remarks>
-            /// MovePosition is chosen because of the need to stop movement from other scripts
-            /// Need to research benifits of both variants to decide if it is worth switching mechanics
+            /// Velosity is chosen because it is much more convinient when movement modifiers (such as dash) are present
             /// </remarks>
         }
         #endregion

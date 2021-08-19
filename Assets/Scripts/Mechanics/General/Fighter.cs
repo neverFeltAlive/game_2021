@@ -46,8 +46,6 @@ namespace Platformer.Mechanics.General
 
 
         #region Serialized Fields
-        [SerializeField] protected Animator animator;
-        [Space]
         [Header("Health Stats")]
         [SerializeField] [Range(1, 100)] [Tooltip("Maximum amount of health")] protected int maxHitPoints = 5;
         [SerializeField] [Range(1f, 10f)] [Tooltip("Resistance to the aim punch force")] protected float aimPunchResistance = 1f;
@@ -55,7 +53,6 @@ namespace Platformer.Mechanics.General
         [Header("Attack Stats")]
         [SerializeField] [Range(0f, 1f)] [Tooltip("Range of melee attack")] protected float attackRange = .2f;
         [SerializeField] [Range(0f, 1f)] [Tooltip("Distance on which object gets pushed when attacking")] protected float attackDashRange = 0.2f;
-        [Space]
         [SerializeField] [Tooltip("Damage object")] protected Damage damage;
         [SerializeField] [Tooltip("Damage object")] protected Damage powerAttackDamage;
         #endregion
@@ -66,7 +63,7 @@ namespace Platformer.Mechanics.General
         protected string targetTag = Constants.FRIENDLY_TAG;                            // objects with wich tag to target
         #endregion
 
-        private bool showDebug = true;
+        protected bool showDebug = true;
         /// <remarks>
         /// Set to true to show debug vectors
         /// </remarks>
@@ -76,9 +73,6 @@ namespace Platformer.Mechanics.General
         #region MonoBehaviour CallBacks
         protected virtual void Start()
         {
-            if (!animator)
-                animator = gameObject.GetComponent<Animator>();
-            
             currentHitPoints = maxHitPoints;
         }
 
@@ -94,9 +88,7 @@ namespace Platformer.Mechanics.General
         {
             Damage dmg = isPower ? powerAttackDamage : damage;
 
-            // Trigger attack animation
-            animator.SetTrigger(Constants.ATTACK);
-            OnAttack?.Invoke(this, new OnAttackEventArgs { isPower = false });
+            OnAttack?.Invoke(this, new OnAttackEventArgs { isPower = isPower });
             
             int angle = 20;
             /// <remarks>
@@ -191,9 +183,6 @@ namespace Platformer.Mechanics.General
 
         protected IEnumerator PowerAttack(Vector3 direction)
         {
-            OnAttack?.Invoke(this, new OnAttackEventArgs { isPower = true });
-
-            yield return new WaitForFixedUpdate();
             gameObject.GetComponent<Rigidbody2D>().MovePosition(transform.position + direction.normalized * attackDashRange);
             
             // DEBUG

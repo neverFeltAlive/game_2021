@@ -152,6 +152,7 @@ namespace Platformer.Mechanics.Character
         private void ShowState(object sender, OnTrackStateChangedEventArgs args) =>
             Debug.Log("<size=13><i><b> TrackController --> </b></i><color=green> ShowState: </color></size>" + args.state);
 
+        #region Input Actions Handlers
         // Performs the actual track (is triggered by Player Input)
         public void Track(InputAction.CallbackContext context)
         {
@@ -167,22 +168,6 @@ namespace Platformer.Mechanics.Character
             }
         }
 
-/*        // Triggers the saving cycle (is triggered by Player Input)
-        public void TriggerTracking(InputAction.CallbackContext context)
-        {
-
-            if (!context.performed)
-                return;
-
-            if (state == TrackingState.Off)
-            {
-                state = TrackingState.Active;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
-                currentSavingTime = savingTime;
-            }
-        }
-*/
         // Binds both action to one button
         public void TriggerAndTrack(InputAction.CallbackContext context)
         {
@@ -208,6 +193,7 @@ namespace Platformer.Mechanics.Character
                 StartCoroutine(TrackCoroutine());
             }
         }
+        #endregion
         #endregion
 
 
