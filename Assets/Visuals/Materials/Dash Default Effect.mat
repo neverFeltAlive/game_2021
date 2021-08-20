@@ -40,5 +40,5 @@ Material:
     - _BlurAmount: 10.200001
     - _Step: 1
     m_Colors:
-    - _Direction: {r: 0.35995388, g: 0.9329701, b: 0, a: 0}
+    - _Direction: {r: 0.9962702, g: -0.08628848, b: 0, a: 0}
   m_BuildTextureStacks: []
