@@ -184,14 +184,6 @@ namespace Platformer.Mechanics.Character
                 else
                     StartCoroutine(DashCoroutine());
             }
-                
-/*            if (!context.performed)
-                return;
-
-            if (dashState == DashState.Ready)
-            {
-                StartCoroutine(DashCoroutine());
-            }*/
         }
 
         public void Return(InputAction.CallbackContext context)
@@ -280,6 +272,11 @@ namespace Platformer.Mechanics.Character
             if (showDebug)
                 UtilsClass.DrawCross(transform.position, Color.yellow, cooldownTime);
 
+            yield return new WaitForSeconds(.3f);
+            /// <remarks>
+            /// Shoud be set to animation time
+            /// </remarks>
+            
             if (isPowerDash && !overLoad)
                 StartCoroutine(Cooldown(cooldownTime));
             else

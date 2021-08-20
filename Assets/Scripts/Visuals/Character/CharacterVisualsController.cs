@@ -8,6 +8,7 @@
 
 
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.Rendering.Universal;
@@ -32,12 +33,20 @@ namespace Platformer.Visuals.Character
      */
     {
         #region Serialized Fields
-        [SerializeField] private Animator animator;
-        [SerializeField] private GameObject dashEffect;
+        [Header("Objects")]
         [SerializeField] private Light2D characterLight;
         [Space]
-        [SerializeField] private RuntimeAnimatorController normalAnimator;
-        [SerializeField] private RuntimeAnimatorController shootingAnimator;
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+        [SerializeField] private RuntimeAnimatorController normalAnimatorController;
+        [SerializeField] private RuntimeAnimatorController shootingAnimatorController;
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [Space]
+        [Header("Materials")]
+        [SerializeField] private Material blurMaterial;
+        [SerializeField] private Material dashMaterial;
+        [SerializeField] private Material glowMaterial;
+        [SerializeField] private Material defaultMaterial;
         #endregion
 
         private Vector2 direction;
@@ -49,12 +58,18 @@ namespace Platformer.Visuals.Character
         {
             if (!characterLight)
                 characterLight = transform.GetChild(0).GetComponent<Light2D>();
+            if (!spriteRenderer)
+                spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+
             characterLight.enabled = false;
+            spriteRenderer.material.mainTextureScale = new Vector2(200, 200);
+            //spriteRenderer.material.mainTexture = new Texture2D(200, 200, TextureFormat.DXT5, false);
 
             CharacterFightController.OnAttack += AttackHandler;
             CharacterFightController.OnFightStateChanged += FightStateChangeHaandler;
             CharacterFightController.OnShoot += ShootHandler;
             DashController.OnDashStateChanged += DashHandler;
+            TrackController.OnTrack += TrackHandler;
         }
 
         private void Update()
@@ -81,19 +96,24 @@ namespace Platformer.Visuals.Character
         private void FightStateChangeHaandler(object sender, CharacterFightController.OnFightStateChangedEventArgs args)
         {
             if (args.state == CharacterFightController.FightState.Normal)
-                animator.runtimeAnimatorController = normalAnimator;
+                animator.runtimeAnimatorController = normalAnimatorController;
             else
-                animator.runtimeAnimatorController = shootingAnimator;
+                animator.runtimeAnimatorController = shootingAnimatorController;
+
+            StartCoroutine(AnimateGlowMaterial(1));
         }
 
         private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
         {
             if (args.state == DashController.DashState.Active)
             {
-                float angle = Mathf.Atan2(-direction.normalized.y, -direction.normalized.x) * Mathf.Rad2Deg;
-                dashEffect.transform.eulerAngles = new Vector3(0f, 0f, angle);
-                dashEffect.GetComponent<Animator>().SetTrigger(Constants.DASH);
+                StartCoroutine(AnimateDashMaterial());
             }
+        }
+
+        private void TrackHandler(object sender, TrackController.OnTrackEventArgs args)
+        {
+            StartCoroutine(AnimateBlurMaterial(args.castingTime));
         }
 
         private void AttackHandler(object sender, CharacterFightController.OnAttackEventArgs args)
@@ -121,6 +141,50 @@ namespace Platformer.Visuals.Character
                 characterLight.enabled = !characterLight.enabled;
         }
         #endregion
+        #endregion
+
+
+
+        #region Coroutines
+        IEnumerator AnimateGlowMaterial(float time = 2f)
+        {
+            spriteRenderer.material = glowMaterial;
+            yield return new WaitForSeconds(time);
+            spriteRenderer.material = defaultMaterial;
+        }
+
+        IEnumerator AnimateDashMaterial()
+        {
+            float frameDuration = .1f;
+
+            spriteRenderer.material = dashMaterial;
+
+            dashMaterial.SetFloat("_Step", 1f);
+            dashMaterial.SetFloat("_BlurAmount", 30f);
+            dashMaterial.SetVector("_Direction", direction.normalized);
+
+            yield return new WaitForSeconds(frameDuration);
+            dashMaterial.SetFloat("_BlurAmount", dashMaterial.GetFloat("_BlurAmount") - 12.8f);
+            yield return new WaitForSeconds(frameDuration);
+            dashMaterial.SetFloat("_BlurAmount", dashMaterial.GetFloat("_BlurAmount") - 7f);
+            yield return new WaitForSeconds(frameDuration);
+
+            spriteRenderer.material = defaultMaterial;
+        }
+
+        IEnumerator AnimateBlurMaterial(float duration)
+        {
+            spriteRenderer.material = blurMaterial;
+
+            blurMaterial.SetFloat("_BlurAmount", 6f);
+            yield return new WaitForSeconds(duration / 3);
+            blurMaterial.SetFloat("_BlurAmount", 2f);
+            yield return new WaitForSeconds(duration / 3);
+            blurMaterial.SetFloat("_BlurAmount", 9f);
+            yield return new WaitForSeconds(duration / 3);
+
+            spriteRenderer.material = defaultMaterial;
+        }
         #endregion
     }
 }

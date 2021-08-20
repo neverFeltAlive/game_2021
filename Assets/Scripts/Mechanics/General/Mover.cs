@@ -71,7 +71,7 @@ namespace Platformer.Mechanics.General
             // Check if movement is allowed
             if (isStopped)
             {
-                body.velocity = direction.normalized * .01f;
+                body.velocity = Vector2.zero;
                 return;
             }
 

@@ -129,9 +129,7 @@ namespace Platformer.Mechanics.Character
         private void DashHandler(object sender, DashController.OnDashStateChangedEventArgs args)
         {
             if (args.state == DashController.DashState.Active)
-                isStopped = true;
-            if (args.state == DashController.DashState.Ready || args.state == DashController.DashState.OnCooldown)
-                isStopped = false;
+                StartCoroutine(DisableMovement(.3f));
         }
 
         private void TrackHandler(object sender, TrackController.OnTrackEventArgs args)
@@ -205,8 +203,15 @@ namespace Platformer.Mechanics.Character
 
 
         #region Coroutines
+        IEnumerator DelayMovementEnable(float time = 0)
+        {
+            yield return new WaitForSeconds(time);
+            isStopped = false;
+        }
+
         IEnumerator DisableMovement(float time = 0)
         {
+            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=blue> DisableMovement: </color></size>");
             isStopped = true;
             if (time == 0)
                 yield return new WaitForFixedUpdate();

@@ -1,7 +1,10 @@
 fileFormatVersion: 2
 guid: 1c5b38a93e51e3644921038b8745f735
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -717247893681648601
+    second: Weapon Idle Down 0_0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -43,7 +46,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -51,7 +54,7 @@ TextureImporter:
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: -1
+  spriteTessellationDetail: 0
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -137,9 +140,34 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Weapon Idle Down 0_0
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 25
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72c453147d2db06f0800000000000000
+      internalID: -717247893681648601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
-    physicsShape: []
+    physicsShape:
+    - - {x: -32, y: -32}
+      - {x: -32, y: 32}
+      - {x: 32, y: 32}
+      - {x: 32, y: -32}
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0

@@ -119,7 +119,7 @@ namespace Platformer.Mechanics.Character
                         {
                             input.Normalize();
                             crosshair.SetActive(true);
-                            crosshair.transform.localPosition = input * .1f;
+                            crosshair.transform.localPosition = input * .3f;
                             direction = input;
                         }
                     }
