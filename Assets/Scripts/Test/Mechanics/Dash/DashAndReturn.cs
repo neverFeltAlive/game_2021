@@ -1,6 +1,8 @@
 /// <remarks>
 /// 
-/// DashController is used for controlling target's dashing mechanics
+/// DashAndReturn is used for extending dash mechanics
+/// It adds a cooldown mechanics, a posibolity to return to the destinations of dash
+/// And overload mechanics
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -10,29 +12,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
-using Platformer.Utils;
+using Custom.Utils;
 
-namespace Platformer.Mechanics.Character
+namespace Custom.Mechanics
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(CharacterMovementController))]
-    public class DashController : MonoBehaviour
+    public class DashAndReturn : Dash
     /* DEBUG statements for this document 
      * 
-     * Debug.Log("DashController --> Start: ")
-     * Debug.Log("<size=13><i><b> DashController --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> DashController --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> DashController --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> DashController --> </b></i><color=green> Function: </color></size>");
+     * Debug.Log("DashAndReturn --> Start: ");
+     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=yellow> FixedUpdate: </color></size>");
+     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=red> Update: </color></size>");
+     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=blue> Corutine: </color></size>");
+     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=green> Function: </color></size>");
      * 
      */
-    /* TODO: 
-     *
-     * Queuing dashes
-     *
+    /* TODO
+     * 
      */
     {
         public enum DashState
@@ -64,12 +60,9 @@ namespace Platformer.Mechanics.Character
 
 
         #region Serialized Fields
-        [SerializeField] private Rigidbody2D characterBody;
-        [Space]
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force")] private float multiplier = .45f;
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Minimum value for the input to be changed")] private float minMagnitude = .6f;
         [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
+        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
+        [SerializeField] [Range(1, 5)] [Tooltip("Time dash remains inactive after being complete")] private float dashInterval = .3f;
         [Space]
         [Header("Cooldown settings")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
@@ -79,16 +72,15 @@ namespace Platformer.Mechanics.Character
         #endregion
 
         #region Private Fields
-        private bool overLoad;
+        private bool isOverLoaded;
 
         private float currentCooldownTriggeringTime;
+        private float overLoadTime;
+
+        private List<Vector3> savedCoordinates;
 
         private DashState dashState;
         private ReturnState returnState;
-
-        private Vector3 direction = new Vector3(1, 0);
-
-        private List<Vector2> savedCoordinates;
         #endregion
 
         private bool showDebug = true;
@@ -102,50 +94,40 @@ namespace Platformer.Mechanics.Character
         [ContextMenu("Default Values")]
         private void DefaultValues()
         {
-            characterBody = gameObject.GetComponent<Rigidbody2D>();
-            characterBody.drag = 5f;
-
-            multiplier = .45f;
-            overLoadMultiplier = 1f;
+            force = .45f;
             minMagnitude = .6f;
+
             maxNumberOfDashes = 5;
+            overLoadMultiplier = 1f;
+            dashInterval = .3f;
 
             cooldownTime = 3f;
             returnCooldownTime = 2f;
             lastReturnCooldownTime = .5f;
             cooldownTriggeringTime = .8f;
-        }   
+        }
         #endregion
 
         #region MonoBehaviour Callbacks
-        private void Start()
+        protected override void Awake()
         {
-            if (!characterBody)
-                characterBody = gameObject.GetComponent<Rigidbody2D>();
+            base.Awake();
 
             dashState = DashState.Ready;
             returnState = ReturnState.InActive;
-            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
-            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
 
             OnDashStateChanged += ShowState;
             OnReturnStateChanged += ShowState;
-            CharacterMovementController.OnOverLoadStateChange += OverLoadHandler;
 
-            savedCoordinates = new List<Vector2>();
+            savedCoordinates = new List<Vector3>();
             currentCooldownTriggeringTime = cooldownTriggeringTime;
-            overLoad = false;
+            isOverLoaded = false;
         }
 
         private void Update()
         {
             CheckCooldownTriggeringTime();
-
-            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
-            if (input.magnitude > minMagnitude)
-                direction = input;
-            else if (input.magnitude > .01f)
-                direction = input * minMagnitude / input.magnitude;
+            CheckOverLoadTime();
         }
         #endregion
 
@@ -167,33 +149,31 @@ namespace Platformer.Mechanics.Character
                 currentCooldownTriggeringTime = cooldownTriggeringTime;
         }
 
-        public void Dash(InputAction.CallbackContext context)
+        private void CheckOverLoadTime()
+        {
+            if (isOverLoaded)
+            {
+                if (overLoadTime - Time.deltaTime < 0)
+                    isOverLoaded = false;
+            }
+        }
+
+        public void TriggerDash(Vector3 direction, bool isOverLoaded = false)
         {
             if (dashState != DashState.Ready)
                 return;
 
-            if (context.interaction is HoldInteraction)
-            {
-                if (context.performed)
-                    StartCoroutine(DashCoroutine(true));
-            }
+            if (this.isOverLoaded || isOverLoaded)
+                StartCoroutine(DashCoroutine(direction, overLoadMultiplier));
             else
-            {
-                if (overLoad)
-                    StartCoroutine(DashCoroutine(true));
-                else
-                    StartCoroutine(DashCoroutine());
-            }
+                StartCoroutine(DashCoroutine(direction));
         }
 
-        public void Return(InputAction.CallbackContext context)
+        public void HandleReturn()
         {
-            if (!context.performed)
-                return;
-
             if (returnState == ReturnState.Active)
             {
-                gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];    
+                gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];
                 savedCoordinates.RemoveAt(savedCoordinates.Count - 1);
 
                 float cooldownTime;
@@ -214,18 +194,16 @@ namespace Platformer.Mechanics.Character
             }
         }
 
+        public void TriggerOverLoad(float time)
+        {
+            overLoadTime = time;
+            isOverLoaded = true;
+        }
+
         private void ShowState(object sender, OnDashStateChangedEventArgs args) =>
             Debug.Log("<size=13><i><b> DashController --> </b></i><color=green> Dash State: </color></size>" + args.state);
         private void ShowState(object sender, OnReturnStateChangedEventArgs args) =>
             Debug.Log("<size=13><i><b> DashController --> </b></i><color=green> Return State: </color></size>" + args.state);
-
-        private void OverLoadHandler(object sender, CharacterMovementController.OnOverLoadStateChangeEventArgs args)
-        {
-            if (args.state == CharacterMovementController.OverLoadState.Active)
-                overLoad = true;
-            else
-                overLoad = false;
-        }
         #endregion
 
 
@@ -238,46 +216,37 @@ namespace Platformer.Mechanics.Character
 
             yield return new WaitForSeconds(time); // wait for required amount of seconds
 
-            savedCoordinates = new List<Vector2>();
+            savedCoordinates = new List<Vector3>();
             returnState = ReturnState.InActive;
             dashState = DashState.Ready;
             OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
             OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
         }
 
-        IEnumerator DashCoroutine(bool isPowerDash = false)
+        IEnumerator DashCoroutine(Vector3 direction, float multiplier = 1)
         {
             dashState = DashState.Active;
-            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState , isPower = isPowerDash});
+            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
 
-            Vector2 target;
-            if (isPowerDash)
-                target = transform.position + direction * overLoadMultiplier;
-            else
-                target = transform.position + direction * multiplier;
-
-            characterBody.MovePosition(target);
-            
-            // DEBUG
-            if (showDebug)
-                Debug.DrawLine(transform.position, target, Color.yellow, .125f);
+            HandleDash(direction, multiplier);
 
             yield return new WaitForFixedUpdate();
 
             savedCoordinates.Add(transform.position);
-            returnState = ReturnState.Active;
-            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
 
             // DEBUG
             if (showDebug)
-                UtilsClass.DrawCross(transform.position, Color.yellow, cooldownTime);
+                UtilsClass.DrawCross(transform.position, Color.yellow, 2f);
 
-            yield return new WaitForSeconds(.3f);
+            returnState = ReturnState.Active;
+            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
+
+            yield return new WaitForSeconds(dashInterval);
             /// <remarks>
             /// Shoud be set to animation time
             /// </remarks>
-            
-            if (isPowerDash && !overLoad)
+
+            if (isOverLoaded && !this.isOverLoaded)
                 StartCoroutine(Cooldown(cooldownTime));
             else
             {
@@ -297,4 +266,3 @@ namespace Platformer.Mechanics.Character
         #endregion
     }
 }
-

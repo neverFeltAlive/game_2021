@@ -13,7 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Platformer.Utils;
+using Custom.Utils;
 
 namespace Platformer.Mechanics.General
 {

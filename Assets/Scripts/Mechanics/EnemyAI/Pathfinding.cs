@@ -6,15 +6,14 @@
 /// 
 /// </remarks>
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Platformer.Utils;
+using Custom.Utils;
 
 namespace Platformer.Mechanics.EnemyAI
 {
-    public class Pathfinding : MonoBehaviour
+    public class Pathfinding
     /* DEBUG statements for this document 
      * 
      * Debug.Log("Pathfinding --> Start: ");
@@ -37,6 +36,11 @@ namespace Platformer.Mechanics.EnemyAI
 
         public static Pathfinding Instance { get; private set; }
 
+        private bool showDebug = true;
+        /// <remarks>
+        /// Set to true to turn visual debug on
+        /// </remarks>
+
 
 
 
@@ -46,6 +50,18 @@ namespace Platformer.Mechanics.EnemyAI
 
             // Create a grid of path nodes
             grid = new Grid<PathNode>(gridWidth, gridHeight, gridCellsize, gridOriginPosition, (int x, int y, Grid<PathNode> g) => new PathNode(x, y, g));
+
+            if (showDebug)
+            {
+                Vector3 downRight = new Vector3(gridOriginPosition.x + gridWidth * gridCellsize, gridOriginPosition.y);
+                Vector3 topLeft = new Vector3(gridOriginPosition.x, gridOriginPosition.y + gridHeight * gridCellsize);
+                Vector3 topRight = new Vector3(downRight.x, topLeft.y);
+
+                Debug.DrawLine(gridOriginPosition, topLeft, Color.black, 1000f);
+                Debug.DrawLine(gridOriginPosition, downRight, Color.black, 1000f);
+                Debug.DrawLine(topRight, topLeft, Color.black, 1000f);
+                Debug.DrawLine(topRight, downRight, Color.black, 1000f);
+            }
         }
 
 
@@ -63,14 +79,8 @@ namespace Platformer.Mechanics.EnemyAI
             else
             {
                 List<Vector3> vectorPath = new List<Vector3>();
-
                 foreach (PathNode node in path)
-                {
-
                     vectorPath.Add(grid.GetWorldPosition(node.x, node.y));
-                    Debug.Log("<size=13><i><b> Pathfinding --> </b></i><color=green> FindPath: </color></size> " + node + "     " +
-                        (grid.GetWorldPosition(node.x, node.y)));
-                }
                 /// <summary>
                 /// To convert grid coordinates to vectors we multimply them by grid cell size and offset by origin position of the grid
                 /// </summary>
@@ -82,6 +92,10 @@ namespace Platformer.Mechanics.EnemyAI
         {
             PathNode startNode = GetNode(startX, startY);
             PathNode endNode = GetNode(endX, endY);
+
+            // Check if target position and current position are within grid
+            if (endNode == null || startNode == null)
+                return null;
 
             openList = new List<PathNode> { startNode };
             closedList = new List<PathNode>();

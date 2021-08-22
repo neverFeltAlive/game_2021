@@ -10,7 +10,7 @@ using UnityEngine;
 
 // [add custom usings if needed]
 
-namespace Platformer.Utils
+namespace Custom.Utils
 {
     // Classes
 

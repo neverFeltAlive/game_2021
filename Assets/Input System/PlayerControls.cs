@@ -327,7 +327,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Roll => m_Wrapper.m_MainControls_Roll;
         public InputAction @Attack => m_Wrapper.m_MainControls_Attack;
         public InputAction @Dash => m_Wrapper.m_MainControls_Dash;
-        public InputAction @DashReturn => m_Wrapper.m_MainControls_DashReturn;
+        public InputAction @GenericDashAndReturn => m_Wrapper.m_MainControls_DashReturn;
         public InputAction @Track => m_Wrapper.m_MainControls_Track;
         public InputAction @OverLoad => m_Wrapper.m_MainControls_OverLoad;
         public InputAction @ToggleShooting => m_Wrapper.m_MainControls_ToggleShooting;
@@ -355,9 +355,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Dash.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDash;
-                @DashReturn.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
-                @DashReturn.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
-                @DashReturn.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
+                @GenericDashAndReturn.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
+                @GenericDashAndReturn.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
+                @GenericDashAndReturn.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnDashReturn;
                 @Track.started -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnTrack;
                 @Track.performed -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnTrack;
                 @Track.canceled -= m_Wrapper.m_MainControlsActionsCallbackInterface.OnTrack;
@@ -392,9 +392,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
-                @DashReturn.started += instance.OnDashReturn;
-                @DashReturn.performed += instance.OnDashReturn;
-                @DashReturn.canceled += instance.OnDashReturn;
+                @GenericDashAndReturn.started += instance.OnDashReturn;
+                @GenericDashAndReturn.performed += instance.OnDashReturn;
+                @GenericDashAndReturn.canceled += instance.OnDashReturn;
                 @Track.started += instance.OnTrack;
                 @Track.performed += instance.OnTrack;
                 @Track.canceled += instance.OnTrack;

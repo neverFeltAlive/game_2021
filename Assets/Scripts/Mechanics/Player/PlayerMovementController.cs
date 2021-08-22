@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// CharacterMovementController is used for controlling target's core movement
+/// PlayerMovementController is used for controlling target's core movement
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -14,16 +14,16 @@ using UnityEngine.InputSystem.Interactions;
 
 using Platformer.Mechanics.General;
 
-namespace Platformer.Mechanics.Character
+namespace Platformer.Mechanics.Player
 {
-    public class CharacterMovementController : Mover
+    public class PlayerMovementController : Mover
     /* DEBUG statements for this document 
      * 
-     * Debug.Log("CharacterMovementController --> Start: ");
-     * Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> Function: </color></size>");
+     * Debug.Log("PlayerMovementController --> Start: ");
+     * Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=yellow> FixedUpdate: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=red> Update: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=blue> Corutine: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=green> Function: </color></size>");
      * 
      */
     {
@@ -53,9 +53,6 @@ namespace Platformer.Mechanics.Character
 
 
         #region Serialized Fields
-        [SerializeField] [Range(0f, 5f)] private float dashMovementSlow;
-        [SerializeField] [Range(0f, 5f)] private float dashMovementSlowTime;
-        [Space]
         [Header("OverLoad Stats")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Time overload remains active after casting")] private float overLoadTime = 5f;
         [SerializeField] [Range(10f, 100f)] private float overLoadCooldownTime = 30f;
@@ -138,7 +135,7 @@ namespace Platformer.Mechanics.Character
         }
 
         private void ShowState(object sender, OnOverLoadStateChangeEventArgs args) =>
-            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
+            Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=green> ShowState: </color></size>" + args.state);
 
         private void PowerAttackHandler(object sender, Fighter.OnAttackEventArgs args)
         {
@@ -211,7 +208,7 @@ namespace Platformer.Mechanics.Character
 
         IEnumerator DisableMovement(float time = 0)
         {
-            Debug.Log("<size=13><i><b> CharacterMovementController --> </b></i><color=blue> DisableMovement: </color></size>");
+            Debug.Log("<size=13><i><b> PlayerMovementController --> </b></i><color=blue> DisableMovement: </color></size>");
             isStopped = true;
             if (time == 0)
                 yield return new WaitForFixedUpdate();

@@ -10,8 +10,8 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-using Platformer.Utils;
-using Platformer.Mechanics.Character;
+using Custom.Utils;
+using Platformer.Mechanics.Player;
 
 namespace Platformer.Camera
 {
@@ -77,7 +77,7 @@ namespace Platformer.Camera
                 target = GameObject.Find(Constants.CHARACTER_NAME).transform;
 
             DashController.OnDashStateChanged += DashHandler;
-            CharacterFightController.OnShoot += ShootHandler;
+            PlayerFightController.OnShoot += ShootHandler;
 
             ResetValues();
         }

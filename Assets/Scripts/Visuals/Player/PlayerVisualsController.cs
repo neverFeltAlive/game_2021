@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// CharacterVisualsController is used for controlling all visual parts of the character.
+/// PlayerVisualsController is used for controlling all visual parts of the character.
 /// Animation, lights and etc.
 /// NeverFeltAlive
 /// 
@@ -13,19 +13,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Experimental.Rendering.Universal;
 
-using Platformer.Mechanics.Character;
-using Platformer.Utils;
+using Platformer.Mechanics.Player;
+using Custom.Utils;
 
-namespace Platformer.Visuals.Character
+namespace Platformer.Visuals.Player
 {
-    public class CharacterVisualsController : MonoBehaviour
+    public class PlayerVisualsController : MonoBehaviour
     /* DEBUG statements for this document 
      * 
-     * Debug.Log("CharacterVisualsController --> Start: ");
-     * Debug.Log("<size=13><i><b> CharacterVisualsController --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterVisualsController --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterVisualsController --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterVisualsController --> </b></i><color=green> Function: </color></size>");
+     * Debug.Log("PlayerVisualsController --> Start: ");
+     * Debug.Log("<size=13><i><b> PlayerVisualsController --> </b></i><color=yellow> FixedUpdate: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerVisualsController --> </b></i><color=red> Update: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerVisualsController --> </b></i><color=blue> Corutine: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerVisualsController --> </b></i><color=green> Function: </color></size>");
      * 
      */
     /* TODO
@@ -65,22 +65,22 @@ namespace Platformer.Visuals.Character
             spriteRenderer.material.mainTextureScale = new Vector2(200, 200);
             //spriteRenderer.material.mainTexture = new Texture2D(200, 200, TextureFormat.DXT5, false);
 
-            CharacterFightController.OnAttack += AttackHandler;
-            CharacterFightController.OnFightStateChanged += FightStateChangeHaandler;
-            CharacterFightController.OnShoot += ShootHandler;
+            PlayerFightController.OnAttack += AttackHandler;
+            PlayerFightController.OnFightStateChanged += FightStateChangeHaandler;
+            PlayerFightController.OnShoot += ShootHandler;
             DashController.OnDashStateChanged += DashHandler;
             TrackController.OnTrack += TrackHandler;
         }
 
         private void Update()
         {
-            Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+            Vector2 input = PlayerMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
 
-            if (GetComponent<CharacterMovementController>().IsMoving())
+            if (GetComponent<PlayerMovementController>().IsMoving())
                 animator.SetFloat(Constants.MAGNITUDE, input.magnitude);
 
             if (input == Vector2.zero)
-                input = CharacterMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
+                input = PlayerMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
 
             if (input != Vector2.zero)                                                      
             {
@@ -93,9 +93,9 @@ namespace Platformer.Visuals.Character
 
         #region Functions
         #region Event Handlers
-        private void FightStateChangeHaandler(object sender, CharacterFightController.OnFightStateChangedEventArgs args)
+        private void FightStateChangeHaandler(object sender, PlayerFightController.OnFightStateChangedEventArgs args)
         {
-            if (args.state == CharacterFightController.FightState.Normal)
+            if (args.state == PlayerFightController.FightState.Normal)
                 animator.runtimeAnimatorController = normalAnimatorController;
             else
                 animator.runtimeAnimatorController = shootingAnimatorController;
@@ -116,7 +116,7 @@ namespace Platformer.Visuals.Character
             StartCoroutine(AnimateBlurMaterial(args.castingTime));
         }
 
-        private void AttackHandler(object sender, CharacterFightController.OnAttackEventArgs args)
+        private void AttackHandler(object sender, PlayerFightController.OnAttackEventArgs args)
         {
             if (!args.isPower)
                 animator.SetTrigger(Constants.ATTACK);

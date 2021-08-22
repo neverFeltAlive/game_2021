@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Platformer.Utils;
+using Custom.Utils;
 using Platformer.Mechanics.General;
 
 namespace Platformer.Mechanics.EnemyAI
@@ -34,6 +34,8 @@ namespace Platformer.Mechanics.EnemyAI
             Roaming,
             Chase
         }
+
+
 
         #region Serialized Fields
         [SerializeField] protected EnemyFightController attack;
@@ -110,9 +112,6 @@ namespace Platformer.Mechanics.EnemyAI
             }
             else
             {
-                // DEBUG 
-                Debug.Log("<size=13><i><b> EnemyMovementController --> </b></i><color=red> Update: </color></size> Chase " + characterTransform.position);
-
                 CalculatePath(characterTransform.position);
                 Move();
             }
@@ -141,10 +140,6 @@ namespace Platformer.Mechanics.EnemyAI
                         pathVectorsList = null;
                 }
             }
-            else
-                pathVectorsList = null;
-
-            // TODO: add base.Move(); when Mover class changed
         }
 
         private void CalculatePath(Vector3 targetPosition)

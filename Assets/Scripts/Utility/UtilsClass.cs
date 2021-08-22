@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Platformer.Utils
+namespace Custom.Utils
 {
     public static class UtilsClass
     /* DEBUG statements for this document 

@@ -12,7 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Platformer.Utils
+namespace Custom.Utils
 {
     public class Grid<TGridObject>
     /* DEBUG statements for this document 
@@ -28,8 +28,6 @@ namespace Platformer.Utils
      * 
      */
     {
-        // Events 
-
         public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
         public class OnGridObjectChangedEventArgs : EventArgs
         {
@@ -40,7 +38,7 @@ namespace Platformer.Utils
         /// We need this event to display changed values
         /// </remarks>
 
-        // Fields
+
 
         private TGridObject[,] gridArray;
 
@@ -52,7 +50,12 @@ namespace Platformer.Utils
         public float CellSize { get; private set; }
         #endregion
 
-        // Functions
+        private bool showDebug = false;
+        /// <remarks>
+        /// Set to true if visual is needed
+        /// </remarks>
+
+
 
         public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<int, int, Grid<TGridObject>, TGridObject> createGridObject)
         {
@@ -72,10 +75,6 @@ namespace Platformer.Utils
                 }
             }
 
-            bool showDebug = false;
-            /// <remarks>
-            /// Set to true if visual is needed
-            /// </remarks>
             if (showDebug)
             {
                 TextMesh[,] debugArray = new TextMesh[width, height];
@@ -85,18 +84,17 @@ namespace Platformer.Utils
                     for (int y = 0; y < gridArray.GetLength(1); y++)
                     {
                         // Print the grid's verticles 
-                        debugArray[x, y] = UtilsClass.CreateWorldText(gridArray[x, y]?.ToString(), Color.white, null, 
-                            GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * .5f);
+                        //debugArray[x, y] = UtilsClass.CreateWorldText(gridArray[x, y]?.ToString(), Color.white, null, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * .5f);
 
                         // Print the grid's lines
-                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.black, 100f);
+                        Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.black, 100f);
                     }
                 }
 
                 // Print the grid's boarder
-                Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+                Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.black, 100f);
+                Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.black, 100f);
 
                 // Subscribe to event
                 OnGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) =>
@@ -106,6 +104,8 @@ namespace Platformer.Utils
             }
 
         }
+
+
 
         #region Public Functions
         // Set value to a certain grid sell 

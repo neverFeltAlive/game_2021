@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 1623731506047877122}
   - component: {fileID: 6528255344941399919}
   - component: {fileID: 9170633083224391017}
+  - component: {fileID: 7792174600629444174}
   - component: {fileID: 3865334965043524365}
   - component: {fileID: 5437658599115080233}
   - component: {fileID: 884304166721421290}
@@ -501,6 +502,18 @@ MonoBehaviour:
   m_DefaultActionMap: Main Controls
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &7792174600629444174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28599003559950206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7648e999d1024f84a803d5439d44c5c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3865334965043524365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -852,7 +865,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -229214
+  m_InstanceId: 42688
 --- !u!95 &190692259018897050
 Animator:
   serializedVersion: 3

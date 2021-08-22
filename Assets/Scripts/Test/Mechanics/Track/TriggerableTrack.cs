@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// TrackController is used for controlling character's track mechanics
+/// TriggerableTrack is used for controlling trggerable track mechinics (you need to first trigger saving before you track)
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -9,20 +9,19 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-using Platformer.Utils;
+using Custom.Utils;
 
-namespace Platformer.Mechanics.Character
+namespace Custom.Mechanics
 {
-    public class TrackController : MonoBehaviour
+    public class TriggerableTrack : MonoBehaviour
     /* DEBUG statements for this document 
      * 
-     * Debug.Log("TrackController --> Start: ");
-     * Debug.Log("<size=13><i><b> TrackController --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> TrackController --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> TrackController --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> TrackController --> </b></i><color=green> Function: </color></size>");
+     * Debug.Log("TriggerableTrack --> Start: ");
+     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=yellow> FixedUpdate: </color></size>");
+     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=red> Update: </color></size>");
+     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=blue> Corutine: </color></size>");
+     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=green> Function: </color></size>");
      * 
      */
     /* TODO
@@ -34,7 +33,7 @@ namespace Platformer.Mechanics.Character
             Ready,
             Active,
             Off,
-            OnCooldown 
+            OnCooldown
         }
 
 
@@ -55,11 +54,11 @@ namespace Platformer.Mechanics.Character
         #region Serialized Fields
         [SerializeField] [Range(15f, 100f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 20f;
         [SerializeField] [Range(0f, 7f)] [Tooltip("Time to which character travels back in seconds")] private float trackingTime = 3f;
-        [SerializeField] [Tooltip("Time to which character travels back in seconds")] private float castingTime = 1f;
+        [Tooltip("Time to which character travels back in seconds")] public float castingTime = 1f;
         #endregion
 
         #region Private Fields
-        private Vector2[] savedCoordinates;             
+        private Vector2[] savedCoordinates;
 
         private TrackingState state;
 
@@ -117,7 +116,7 @@ namespace Platformer.Mechanics.Character
                 currentCooldownTime = coolldownTime;
             }
         }
-        
+
         // Saves the coordinates and counts down the time track is active
         private void HandleSaving()
         {
@@ -152,48 +151,38 @@ namespace Platformer.Mechanics.Character
         private void ShowState(object sender, OnTrackStateChangedEventArgs args) =>
             Debug.Log("<size=13><i><b> TrackController --> </b></i><color=green> ShowState: </color></size>" + args.state);
 
-        #region Input Actions Handlers
-        // Performs the actual track (is triggered by Player Input)
-        public void Track(InputAction.CallbackContext context)
+        public void TriggerTrack()
         {
-            if (!context.performed)
-                return;
-
-            if (state == TrackingState.Ready)
+            if (state == TrackingState.Ready) 
             {
-                state = TrackingState.OnCooldown;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
-                StartCoroutine(TrackCoroutine());
-            }
-        }
-
-        // Binds both action to one button
-        public void TriggerAndTrack(InputAction.CallbackContext context)
-        {
-            if (state == TrackingState.OnCooldown)
-                return;
-
-            if (context.performed)
-            {
-                if (state == TrackingState.Off)
+                for (int i = savedCoordinates.Length - 1; i >= 0; i--)
                 {
-                    state = TrackingState.Active;
-                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                    savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
-                    currentSavingTime = savingTime;
+                    if (savedCoordinates[i] != default(Vector2))
+                    {
+                        transform.position = savedCoordinates[i];
+                        break;
+                    }
                 }
             }
 
-            if (context.canceled)
+            if (state != TrackingState.OnCooldown)
             {
                 state = TrackingState.OnCooldown;
                 OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
                 OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
-                StartCoroutine(TrackCoroutine());
             }
         }
-        #endregion
+
+        public void TriggerSaving()
+        {
+            if (state == TrackingState.Off)
+            {
+                state = TrackingState.Active;
+                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
+                currentSavingTime = savingTime;
+            }
+        }
         #endregion
 
 

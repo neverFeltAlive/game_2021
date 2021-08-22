@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// CharacterFightController is used for [short description]
+/// PlayerFightController is used for [short description]
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -13,18 +13,18 @@ using UnityEngine.InputSystem.Interactions;
 
 using Platformer.Mechanics.General;
 using Platformer.Mechanics.Objects;
-using Platformer.Utils;
+using Custom.Utils;
 
-namespace Platformer.Mechanics.Character
+namespace Platformer.Mechanics.Player
 {
-    public class CharacterFightController : Fighter
+    public class PlayerFightController : Fighter
     /* DEBUG statements for this document 
      * 
-     * Debug.Log("CharacterFightController --> Start: ");
-     * Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=green> Function: </color></size>");
+     * Debug.Log("PlayerFightController --> Start: ");
+     * Debug.Log("<size=13><i><b> PlayerFightController --> </b></i><color=yellow> FixedUpdate: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerFightController --> </b></i><color=red> Update: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerFightController --> </b></i><color=blue> Corutine: </color></size>");
+     * Debug.Log("<size=13><i><b> PlayerFightController --> </b></i><color=green> Function: </color></size>");
      * 
      */
     /* TODO
@@ -89,7 +89,7 @@ namespace Platformer.Mechanics.Character
         {
             base.Start();
 
-            CharacterMovementController.OnOverLoadStateChange += OverLoadHandler;
+            PlayerMovementController.OnOverLoadStateChange += OverLoadHandler;
 
             crosshair.SetActive(false);
             targetTag = Constants.ENEMY_TAG;
@@ -104,17 +104,17 @@ namespace Platformer.Mechanics.Character
             switch (state)
             {
                 case FightState.Normal:
-                    Vector2 input = CharacterMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
+                    Vector2 input = PlayerMovementController.playerControls.MainControls.Walk.ReadValue<Vector2>();
                     if (input != Vector2.zero)
                         direction = input;
                     break;
 
                 case FightState.Shooting:
-                    if (GetComponent<CharacterMovementController>().IsMoving())
+                    if (GetComponent<PlayerMovementController>().IsMoving())
                         crosshair.SetActive(false);
                     else
                     {
-                        input = CharacterMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
+                        input = PlayerMovementController.playerControls.MainControls.Aim.ReadValue<Vector2>();
                         if (input.magnitude > .5f)
                         {
                             input.Normalize();
@@ -129,9 +129,9 @@ namespace Platformer.Mechanics.Character
         #endregion
 
         #region Functions
-        private void OverLoadHandler(object sender, CharacterMovementController.OnOverLoadStateChangeEventArgs args)
+        private void OverLoadHandler(object sender, PlayerMovementController.OnOverLoadStateChangeEventArgs args)
         {
-            if (args.state == CharacterMovementController.OverLoadState.Active)
+            if (args.state == PlayerMovementController.OverLoadState.Active)
                 overLoad = true;
             else
                 overLoad = false;
@@ -163,12 +163,12 @@ namespace Platformer.Mechanics.Character
             if (state == FightState.Normal)
                 return;
 
-            if (GetComponent<CharacterMovementController>().IsMoving())
+            if (GetComponent<PlayerMovementController>().IsMoving())
                 return;
 
             if (context.canceled)
             {
-                Debug.Log("<size=13><i><b> CharacterFightController --> </b></i><color=green> Shoot: </color></size>");
+                Debug.Log("<size=13><i><b> PlayerFightController --> </b></i><color=green> Shoot: </color></size>");
                 OnShoot?.Invoke(this, EventArgs.Empty);
 
                 if (showDebug) Debug.DrawLine(crosshair.transform.position, crosshair.transform.position + direction.normalized * shootingRange, Color.red, .5f);

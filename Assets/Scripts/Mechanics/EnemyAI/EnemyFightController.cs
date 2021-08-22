@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Platformer.Mechanics.General;
-using Platformer.Utils;
+using Custom.Utils;
 
 namespace Platformer.Mechanics.EnemyAI
 {
