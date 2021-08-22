@@ -12,7 +12,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 
 using Custom.Mechanics;
-using Platformer.Visuals;
 
 namespace Platformer.Controls
 {
@@ -37,7 +36,6 @@ namespace Platformer.Controls
         private TriggerableTrack track;
         private DashAndReturn dash;
         private Roll roll;
-        private PlayerVisualsController visuals;
 
         public Vector3 Position { get { return transform.position; } }
         public static PlayerController Instance { get; private set; }
@@ -54,7 +52,6 @@ namespace Platformer.Controls
             track = GetComponent<TriggerableTrack>();
             attack = GetComponent<VectorMeleeAttack>();
             powerAttack = GetComponent<PowerMeleeAttack>();
-            visuals = GetComponent<PlayerVisualsController>();
         }
 
         private void Start()
@@ -74,7 +71,6 @@ namespace Platformer.Controls
             if (context.canceled)
             {
                 roll.TriggerRoll();
-                visuals.PlayRollAnimmation();
             }
         }
 
@@ -92,22 +88,15 @@ namespace Platformer.Controls
             {
                 dash.TriggerDash(movement.Direction, false);
             }
-
-            visuals.PlayDashAnimation();
         }
 
         public void Track(InputAction.CallbackContext context)
         {
             if (context.performed)
-            {
                 track.TriggerSaving();
-            }
 
             if (context.canceled)
-            {
                 track.TriggerTrack();
-                visuals.PlayTrackAnimation(track.castingTime);
-            }
         }
 
         public void Return(InputAction.CallbackContext context)
@@ -132,8 +121,6 @@ namespace Platformer.Controls
             {
                 attack.TriggerAttack();
             }
-
-            visuals.PlayAttackAnimation();
         }
     }
 }

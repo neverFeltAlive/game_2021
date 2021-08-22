@@ -6,6 +6,7 @@
 /// </remarks>
 
 
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -32,21 +33,22 @@ namespace Platformer.Visuals
         [Header("Animation")]
         [SerializeField] private RuntimeAnimatorController normalAnimatorController;
         [SerializeField] private RuntimeAnimatorController shootingAnimatorController;
-        [Space]
-        [Header("Materials")]
+        [Space] [Header("Materials")]
         [SerializeField] private Material blurMaterial;
         [SerializeField] private Material dashMaterial;
         [SerializeField] private Material glowMaterial;
         [SerializeField] private Material defaultMaterial;
         #endregion
 
-        private bool isWalking;
-
         private Vector2 direction;
 
         private Light2D characterLight;
         private SpriteRenderer spriteRenderer;
         private Animator animator;
+
+        private IEnumerator dashRoutine;
+        private IEnumerator blurRoutine;
+        private IEnumerator glowCoroutine;
 
 
 
@@ -60,12 +62,25 @@ namespace Platformer.Visuals
             characterLight.enabled = false;
         }
 
-        private void Update()
+        private void Start()
+        {
+            Roll.OnRoll += RollHandler;
+            VectorMeleeAttack.OnAttack += AttackHandler;
+            PowerMeleeAttack.OnPowerAttack += AttackHandler;
+            TriggerableTrack.OnTrack += TrackHandler;
+            DashAndReturn.OnDashStateChanged += DashHandler;
+        }
+
+        private void Update() =>
+            PlayWalkAnimation();
+        #endregion
+
+        #region Functions
+        private void PlayWalkAnimation()
         {
             Vector2 input = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
 
-            if (isWalking)
-                animator.SetFloat(Constants.MAGNITUDE, input.magnitude);
+            animator.SetFloat(Constants.MAGNITUDE, input.magnitude);
 
             if (input == Vector2.zero)
                 input = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
@@ -77,33 +92,59 @@ namespace Platformer.Visuals
                 animator.SetFloat(Constants.VERTICAL, direction.y);
             }
         }
+
+        #region Event Handlers
+        private void DashHandler(object sender, DashAndReturn.OnDashStateChangedEventArgs args)
+        {
+            switch (args.state)
+            {
+                case DashAndReturn.DashState.Active:
+                    PlayDashAnimation();
+                    break;
+
+                case DashAndReturn.DashState.Ready:
+                    break;
+
+                case DashAndReturn.DashState.OnCooldown:
+                    break;
+            }
+        }
+
+        private void TrackHandler(object sender, EventArgs args) =>
+            PlayTrackAnimation();
+
+        private void AttackHandler(object sender, System.EventArgs args) =>
+            PlayAttackAnimation();
+
+        private void RollHandler(object sender, System.EventArgs args) =>
+            PlayRollAnimmation();
         #endregion
 
-        #region Functions
-        public void StartWalkAnimation()
-        {
-            isWalking = true;
-        }
-
+        #region Public Functions
         public void PlayDashAnimation()
         {
-            StartCoroutine(AnimateDashMaterial());
+            if (dashRoutine == null)
+            {
+                dashRoutine = AnimateDashMaterial();
+                StartCoroutine(dashRoutine);
+            }
         }
 
-        public void PlayTrackAnimation(float time)
+        public void PlayTrackAnimation()
         {
-            StartCoroutine(AnimateBlurMaterial(time));
+            if (blurRoutine == null)
+            {
+                blurRoutine = AnimateBlurMaterial();
+                StartCoroutine(blurRoutine);
+            }
         }
 
-        public void PlayAttackAnimation()
-        {
+        public void PlayAttackAnimation() =>
             animator.SetTrigger(Constants.ATTACK);
-        }
 
-        public void PlayRollAnimmation()
-        {
+        public void PlayRollAnimmation() =>
             animator.SetTrigger(Constants.ROLL);
-        }
+        #endregion
 
         public void ToggleLights(InputAction.CallbackContext context)
         {
@@ -124,35 +165,41 @@ namespace Platformer.Visuals
 
         IEnumerator AnimateDashMaterial()
         {
-            float frameDuration = .1f;
+            int numberOfFrames = 6;
+            float frameDuration = .05f;
+            float blurAmount = 30f;
+            float blurAmountDrop = 5f;
 
             spriteRenderer.material = dashMaterial;
-
-            dashMaterial.SetFloat("_Step", 1f);
-            dashMaterial.SetFloat("_BlurAmount", 30f);
             dashMaterial.SetVector("_Direction", direction.normalized);
 
-            yield return new WaitForSeconds(frameDuration);
-            dashMaterial.SetFloat("_BlurAmount", dashMaterial.GetFloat("_BlurAmount") - 12.8f);
-            yield return new WaitForSeconds(frameDuration);
-            dashMaterial.SetFloat("_BlurAmount", dashMaterial.GetFloat("_BlurAmount") - 7f);
-            yield return new WaitForSeconds(frameDuration);
+            for (int i = 0; i < numberOfFrames; i++)
+            {
+                yield return new WaitForSeconds(frameDuration);
+                dashMaterial.SetFloat("_BlurAmount", blurAmount - blurAmountDrop * i);
+            }
 
             spriteRenderer.material = defaultMaterial;
+            dashRoutine = null;
         }
 
-        IEnumerator AnimateBlurMaterial(float duration)
+        IEnumerator AnimateBlurMaterial()
         {
+            int numberOfFrames = 3;
+            float castingTime = .3f;
+            float maxBlurAmount = 9f;
+            float minBlurAmount = .5f;
+
             spriteRenderer.material = blurMaterial;
 
-            blurMaterial.SetFloat("_BlurAmount", 6f);
-            yield return new WaitForSeconds(duration / 3);
-            blurMaterial.SetFloat("_BlurAmount", 2f);
-            yield return new WaitForSeconds(duration / 3);
-            blurMaterial.SetFloat("_BlurAmount", 9f);
-            yield return new WaitForSeconds(duration / 3);
+            for (int i = 0; i < numberOfFrames; i++)
+            {
+                yield return new WaitForSeconds(castingTime / numberOfFrames);
+                blurMaterial.SetFloat("_BlurAmount", UnityEngine.Random.Range(minBlurAmount, maxBlurAmount));
+            }
 
             spriteRenderer.material = defaultMaterial;
+            blurRoutine = null;
         }
         #endregion
     }

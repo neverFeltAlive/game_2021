@@ -48,8 +48,9 @@ namespace Custom.Mechanics
         public static event EventHandler<OnDashStateChangedEventArgs> OnDashStateChanged;
         public class OnDashStateChangedEventArgs : EventArgs
         {
-            public DashState state;
             public bool isPower;
+            public DashState state;
+            public Vector3 direction;
         }
         public static event EventHandler<OnReturnStateChangedEventArgs> OnReturnStateChanged;
         public class OnReturnStateChangedEventArgs : EventArgs
@@ -63,8 +64,7 @@ namespace Custom.Mechanics
         [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
         [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
         [SerializeField] [Range(1, 5)] [Tooltip("Time dash remains inactive after being complete")] private float dashInterval = .3f;
-        [Space]
-        [Header("Cooldown settings")]
+        [Space] [Header("Cooldown settings")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time after every return in seconds")] private float returnCooldownTime = 2f;
         [SerializeField] [Range(0f, 10f)] [Tooltip("Dash cooldown time after last return in seconds")] private float lastReturnCooldownTime = .5f;
@@ -115,9 +115,6 @@ namespace Custom.Mechanics
 
             dashState = DashState.Ready;
             returnState = ReturnState.InActive;
-
-            OnDashStateChanged += ShowState;
-            OnReturnStateChanged += ShowState;
 
             savedCoordinates = new List<Vector3>();
             currentCooldownTriggeringTime = cooldownTriggeringTime;
@@ -199,11 +196,6 @@ namespace Custom.Mechanics
             overLoadTime = time;
             isOverLoaded = true;
         }
-
-        private void ShowState(object sender, OnDashStateChangedEventArgs args) =>
-            Debug.Log("<size=13><i><b> DashController --> </b></i><color=green> Dash State: </color></size>" + args.state);
-        private void ShowState(object sender, OnReturnStateChangedEventArgs args) =>
-            Debug.Log("<size=13><i><b> DashController --> </b></i><color=green> Return State: </color></size>" + args.state);
         #endregion
 
 

@@ -17,10 +17,6 @@ namespace Custom.Utils
     // Frequently used values 
     public static class Constants
     {
-        // Action maps
-        public const string DEFAULT_MAP = "Main Controls";
-        public const string SHOOTING_MAP = "Shooting Controls";
-
         // Object identifiers 
         public const string CHARACTER_NAME = "Character";
         public const string ENEMY_TAG = "Enemy";

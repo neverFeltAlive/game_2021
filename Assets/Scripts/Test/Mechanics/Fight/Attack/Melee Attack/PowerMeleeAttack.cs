@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// PowerMeleeAttack is used for extending vector melee attack with power attack mechancs
+/// PowerMeleeAttack is used for extending melee attack with power attack mechancs
 /// NeverFeltAlive
 /// 
 /// </remarks>

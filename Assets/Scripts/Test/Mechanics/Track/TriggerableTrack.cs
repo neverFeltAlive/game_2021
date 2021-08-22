@@ -1,6 +1,7 @@
 /// <remarks>
 /// 
-/// TriggerableTrack is used for controlling trggerable track mechinics (you need to first trigger saving before you track)
+/// TriggerableTrack is used for extanding simple track mechinics with triggering option 
+/// (you need to first trigger saving before you track)
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -10,11 +11,9 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-using Custom.Utils;
-
 namespace Custom.Mechanics
 {
-    public class TriggerableTrack : MonoBehaviour
+    public class TriggerableTrack : Track
     /* DEBUG statements for this document 
      * 
      * Debug.Log("TriggerableTrack --> Start: ");
@@ -30,7 +29,6 @@ namespace Custom.Mechanics
     {
         public enum TrackingState
         {
-            Ready,
             Active,
             Off,
             OnCooldown
@@ -43,23 +41,15 @@ namespace Custom.Mechanics
         {
             public TrackingState state;
         }
-        public static event EventHandler<OnTrackEventArgs> OnTrack;
-        public class OnTrackEventArgs : EventArgs
-        {
-            public float castingTime;
-        }
 
 
 
         #region Serialized Fields
         [SerializeField] [Range(15f, 100f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 20f;
-        [SerializeField] [Range(0f, 7f)] [Tooltip("Time to which character travels back in seconds")] private float trackingTime = 3f;
         [Tooltip("Time to which character travels back in seconds")] public float castingTime = 1f;
         #endregion
 
         #region Private Fields
-        private Vector2[] savedCoordinates;
-
         private TrackingState state;
 
         private float savingTime = 10f;
@@ -67,10 +57,6 @@ namespace Custom.Mechanics
         private float currentCooldownTime;
         #endregion
 
-        private bool showDebug = true;
-        /// <remarks>
-        /// Set to true to show debug vectors
-        /// </remarks>
 
 
         #region Context Menu
@@ -84,19 +70,19 @@ namespace Custom.Mechanics
         #endregion
 
         #region MonoBehaviour Callbacks
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
+
             currentCooldownTime = coolldownTime;
             currentSavingTime = savingTime;
             state = TrackingState.Off;
-
-            if (showDebug) OnTrackStateChanged += ShowState;
         }
 
-        private void FixedUpdate()
+        protected override void FixedUpdate()
         {
-            if (state == TrackingState.Active || state == TrackingState.Ready)
-                HandleSaving();
+            if (state == TrackingState.Active)
+                base.FixedUpdate();
 
             if (state == TrackingState.OnCooldown)
                 HandleCooldown();
@@ -118,28 +104,12 @@ namespace Custom.Mechanics
         }
 
         // Saves the coordinates and counts down the time track is active
-        private void HandleSaving()
+        protected override void HandleSaving()
         {
             if (currentSavingTime - Time.fixedDeltaTime > 0)
             {
                 currentSavingTime -= Time.fixedDeltaTime;
-
-                // Check if the array is filled for the first time
-                if (currentSavingTime <= savingTime - trackingTime && state != TrackingState.Ready)
-                {
-                    state = TrackingState.Ready;
-                    OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                }
-
-                for (int j = savedCoordinates.Length - 1; j > 0; j--)
-                    savedCoordinates[j] = savedCoordinates[j - 1];
-                savedCoordinates[0] = transform.position;
-                /// <summary>
-                /// Its basicaly a stack-like system (last in - first out). Every selected interval a new elemnt is added which will be taken when the whole time period is over
-                /// If there will be problems with optimization we can return intrval system (save coordinates not every fixed update but a much bigger time period
-                /// </summary>
-
-                if (showDebug) UtilsClass.DrawCross(transform.position, Color.white, 5f);
+                base.HandleSaving();
             }
             else
             {
@@ -148,28 +118,17 @@ namespace Custom.Mechanics
             }
         }
 
-        private void ShowState(object sender, OnTrackStateChangedEventArgs args) =>
-            Debug.Log("<size=13><i><b> TrackController --> </b></i><color=green> ShowState: </color></size>" + args.state);
-
-        public void TriggerTrack()
+        public override void TriggerTrack()
         {
-            if (state == TrackingState.Ready) 
+            if (state == TrackingState.Active) 
             {
-                for (int i = savedCoordinates.Length - 1; i >= 0; i--)
-                {
-                    if (savedCoordinates[i] != default(Vector2))
-                    {
-                        transform.position = savedCoordinates[i];
-                        break;
-                    }
-                }
+                base.TriggerTrack();
             }
 
             if (state != TrackingState.OnCooldown)
             {
                 state = TrackingState.OnCooldown;
                 OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                OnTrack?.Invoke(this, new OnTrackEventArgs { castingTime = castingTime });
             }
         }
 
@@ -179,33 +138,10 @@ namespace Custom.Mechanics
             {
                 state = TrackingState.Active;
                 OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
-                savedCoordinates = new Vector2[(int)(trackingTime / Time.fixedDeltaTime)];
+                savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
                 currentSavingTime = savingTime;
             }
         }
         #endregion
-
-
-
-        IEnumerator TrackCoroutine()
-        {
-            yield return new WaitForSeconds(castingTime);
-
-            if (savedCoordinates[savedCoordinates.Length - 1] != default(Vector2))
-                gameObject.transform.position = savedCoordinates[savedCoordinates.Length - 1];
-            else
-            {
-                for (int i = savedCoordinates.Length - 1; i >= 0; i--)
-                {
-                    if (savedCoordinates[i] != default(Vector2))
-                    {
-                        transform.position = savedCoordinates[i];
-                        break;
-                    }
-                    else if (i == 0)
-                        transform.position = savedCoordinates[i];
-                }
-            }
-        }
     }
 }

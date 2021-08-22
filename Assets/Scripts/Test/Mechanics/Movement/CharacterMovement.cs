@@ -72,6 +72,7 @@ namespace Custom.Mechanics
             else
                 timer -= Time.deltaTime;
         }
+
         public void SetSpeed(float speed) =>
             this.speed = speed;
         public void SetSpeed(float speed, float time)
