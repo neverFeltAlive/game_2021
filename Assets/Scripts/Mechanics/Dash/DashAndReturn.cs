@@ -1,4 +1,4 @@
-/// <remarks>
+// <remarks>
 /// 
 /// DashAndReturn is used for extending dash mechanics
 /// It adds a cooldown mechanics, a posibolity to return to the destinations of dash
@@ -17,8 +17,8 @@ using Custom.Utils;
 
 namespace Custom.Mechanics
 {
-    public class DashAndReturn : Dash
-    /* DEBUG statements for this document 
+    public class DashAndReturn : Dash, IStateMechanics<DashEventArgs>
+    /*DEBUG statements for this document 
      * 
      * Debug.Log("DashAndReturn --> Start: ");
      * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=yellow> FixedUpdate: </color></size>");
@@ -31,12 +31,6 @@ namespace Custom.Mechanics
      * 
      */
     {
-        public enum DashState
-        {
-            Ready,
-            Active,
-            OnCooldown
-        }
         public enum ReturnState
         {
             Active,
@@ -45,43 +39,34 @@ namespace Custom.Mechanics
 
 
 
-        public static event EventHandler<OnDashStateChangedEventArgs> OnDashStateChanged;
-        public class OnDashStateChangedEventArgs : EventArgs
-        {
-            public bool isPower;
-            public DashState state;
-            public Vector3 direction;
-        }
-        public static event EventHandler<OnReturnStateChangedEventArgs> OnReturnStateChanged;
+        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+        public event EventHandler<OnReturnStateChangedEventArgs> OnReturnStateChanged;
         public class OnReturnStateChangedEventArgs : EventArgs
         {
-            public ReturnState state;
+            public MechanicsState state;
         }
 
 
 
         #region Serialized Fields
         [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
-        [SerializeField] [Range(0f, 100f)] [Tooltip("Dashing force for overloaded dash")] private float overLoadMultiplier = 1f;
         [SerializeField] [Range(1, 5)] [Tooltip("Time dash remains inactive after being complete")] private float dashInterval = .3f;
-        [Space] [Header("Cooldown settings")]
+        [Space]
+        [Header("Cooldown settings")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time after every return in seconds")] private float returnCooldownTime = 2f;
         [SerializeField] [Range(0f, 10f)] [Tooltip("Dash cooldown time after last return in seconds")] private float lastReturnCooldownTime = .5f;
         [SerializeField] [Range(.1f, 5f)] [Tooltip("Time  after one dash untill coldown is triggered")] private float cooldownTriggeringTime = .8f;
         #endregion
 
-        #region Private Fields
-        private bool isOverLoaded;
+        private float lastDashTime;
 
-        private float currentCooldownTriggeringTime;
-        private float overLoadTime;
+        private MechanicsState dashState;
+        private MechanicsState returnState;
 
         private List<Vector3> savedCoordinates;
 
-        private DashState dashState;
-        private ReturnState returnState;
-        #endregion
+        public MechanicsState State { get { return dashState; } }
 
         private bool showDebug = true;
         /// <remarks>
@@ -90,147 +75,101 @@ namespace Custom.Mechanics
 
 
 
-        #region Context Menu
-        [ContextMenu("Default Values")]
-        private void DefaultValues()
-        {
-            force = .45f;
-            minMagnitude = .6f;
-
-            maxNumberOfDashes = 5;
-            overLoadMultiplier = 1f;
-            dashInterval = .3f;
-
-            cooldownTime = 3f;
-            returnCooldownTime = 2f;
-            lastReturnCooldownTime = .5f;
-            cooldownTriggeringTime = .8f;
-        }
-        #endregion
-
         #region MonoBehaviour Callbacks
         protected override void Awake()
         {
             base.Awake();
 
-            dashState = DashState.Ready;
-            returnState = ReturnState.InActive;
+            dashState = MechanicsState.Ready;
+            returnState = MechanicsState.Ready;
 
             savedCoordinates = new List<Vector3>();
-            currentCooldownTriggeringTime = cooldownTriggeringTime;
-            isOverLoaded = false;
         }
 
         private void Update()
         {
             CheckCooldownTriggeringTime();
-            CheckOverLoadTime();
         }
         #endregion
 
-        #region Functions
         // Check if too much time passed since last dash
         private void CheckCooldownTriggeringTime()
         {
-            if (dashState == DashState.Ready && savedCoordinates.Count != 0)
+            if (dashState == MechanicsState.Ready && savedCoordinates.Count != 0)
             {
-                if (currentCooldownTriggeringTime - Time.deltaTime < 0)
+                if (lastDashTime - Time.deltaTime < 0)
                 {
-                    currentCooldownTriggeringTime = cooldownTriggeringTime;
+                    lastDashTime = cooldownTriggeringTime;
                     StartCoroutine(Cooldown(cooldownTime));
                 }
                 else
-                    currentCooldownTriggeringTime -= Time.deltaTime;
+                    lastDashTime -= Time.deltaTime;
             }
             else
-                currentCooldownTriggeringTime = cooldownTriggeringTime;
+                lastDashTime = cooldownTriggeringTime;
         }
 
-        private void CheckOverLoadTime()
+        #region Dash Overrides
+        public override void Trigger(Vector3 direction)
         {
-            if (isOverLoaded)
-            {
-                if (overLoadTime - Time.deltaTime < 0)
-                    isOverLoaded = false;
-            }
-        }
-
-        public void TriggerDash(Vector3 direction, bool isOverLoaded = false)
-        {
-            if (dashState != DashState.Ready)
+            if (dashState != MechanicsState.Ready)
                 return;
 
-            if (this.isOverLoaded || isOverLoaded)
-                StartCoroutine(DashCoroutine(direction, overLoadMultiplier));
-            else
-                StartCoroutine(DashCoroutine(direction));
+            base.Trigger(direction);
         }
 
-        public void HandleReturn()
+        protected override void Handle()
         {
-            if (returnState == ReturnState.Active)
+            StartCoroutine(DashCoroutine(direction));
+        }
+        #endregion
+
+        #region Return Mechanics
+        public void TriggerReturn()
+        {
+            if (returnState == MechanicsState.Ready)
+                HandleReturn();
+        }
+
+        private void HandleReturn()
+        {
+            gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];
+            savedCoordinates.RemoveAt(savedCoordinates.Count - 1);
+
+            float cooldownTime;
+            if (savedCoordinates.Count == 0)
             {
-                gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];
-                savedCoordinates.RemoveAt(savedCoordinates.Count - 1);
-
-                float cooldownTime;
-                if (savedCoordinates.Count == 0)
-                {
-                    returnState = ReturnState.InActive;
-                    OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
-                    cooldownTime = lastReturnCooldownTime;
-                }
-                else
-                    cooldownTime = returnCooldownTime;
-
-                StopAllCoroutines();
-                StartCoroutine(Cooldown(cooldownTime));
-                /// <remarks>
-                /// We need to stop all coroutines to make last return completely restart cooldown with new timer
-                /// </remarks>
+                returnState = MechanicsState.OnCooldown;
+                OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
+                cooldownTime = lastReturnCooldownTime;
             }
-        }
+            else
+                cooldownTime = returnCooldownTime;
 
-        public void TriggerOverLoad(float time)
-        {
-            overLoadTime = time;
-            isOverLoaded = true;
+            StopAllCoroutines();
+            StartCoroutine(Cooldown(cooldownTime));
+            /// <remarks>
+            /// We need to stop all coroutines to make last return completely restart cooldown with new timer
+            /// </remarks>
         }
         #endregion
 
 
 
         #region Coroutines
-        IEnumerator Cooldown(float time)
+        IEnumerator DashCoroutine(Vector3 direction)
         {
-            dashState = DashState.OnCooldown;
-            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
-
-            yield return new WaitForSeconds(time); // wait for required amount of seconds
-
-            savedCoordinates = new List<Vector3>();
-            returnState = ReturnState.InActive;
-            dashState = DashState.Ready;
-            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
-            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
-        }
-
-        IEnumerator DashCoroutine(Vector3 direction, float multiplier = 1)
-        {
-            dashState = DashState.Active;
-            OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
-
-            HandleDash(direction, multiplier);
-
+            dashState = MechanicsState.Active;
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+            base.Handle();
             yield return new WaitForFixedUpdate();
-
             savedCoordinates.Add(transform.position);
 
             // DEBUG
             if (showDebug)
                 UtilsClass.DrawCross(transform.position, Color.yellow, 2f);
 
-            returnState = ReturnState.Active;
+            returnState = MechanicsState.Ready;
             OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
 
             yield return new WaitForSeconds(dashInterval);
@@ -238,23 +177,33 @@ namespace Custom.Mechanics
             /// Shoud be set to animation time
             /// </remarks>
 
-            if (isOverLoaded && !this.isOverLoaded)
+            if (savedCoordinates.Count == maxNumberOfDashes)
                 StartCoroutine(Cooldown(cooldownTime));
             else
             {
-                if (savedCoordinates.Count == maxNumberOfDashes)
-                    StartCoroutine(Cooldown(cooldownTime));
-                else
-                {
-                    dashState = DashState.Ready;
-                    OnDashStateChanged?.Invoke(this, new OnDashStateChangedEventArgs { state = dashState });
-                }
+                dashState = MechanicsState.Ready;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
             }
         }
         /// <remarks>
         /// Dash is implemented as a coroutine because of the need to save coordinates
         /// We cannot save target location before moving to that location as we need to check if there are any colliders on the way
         /// </remarks>
+
+        IEnumerator Cooldown(float time)
+        {
+            dashState = MechanicsState.OnCooldown;
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+
+            yield return new WaitForSeconds(time); // wait for required amount of seconds
+
+            savedCoordinates = new List<Vector3>();
+            returnState = MechanicsState.OnCooldown;
+            dashState = MechanicsState.Ready;
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
+        }
         #endregion
+
     }
 }

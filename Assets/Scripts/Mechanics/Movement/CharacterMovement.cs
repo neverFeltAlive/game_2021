@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Custom.Mechanics
 {
-    public class CharacterMovement : VelocityMovement, IDisablableMovement
+    public class CharacterMovement : VelocityMovement, IDisablableMovement<Vector3, float>
     /* DEBUG statements for this document 
      * 
      * Debug.Log("CharacterMovement --> Start: ");

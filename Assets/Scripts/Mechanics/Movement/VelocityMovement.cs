@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Custom.Mechanics
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    public class VelocityMovement : MonoBehaviour, IMoving
+    public class VelocityMovement : MonoBehaviour, IMovement<Vector3, float>
     /* DEBUG statements for this document 
      * 
      * Debug.Log("VelocityMovement --> Start: ");

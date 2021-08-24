@@ -48,11 +48,11 @@ namespace Custom.Mechanics
         protected abstract void OnSave();
 
         protected abstract void OnReturn();
-
-        public override void HandleDash(Vector3 direction, float multiplier = 0f)
+/*
+        public override void Trigger(Vector3 direction, float multiplier = 0f)
         {
             StartCoroutine(DashCoroutine(direction, multiplier));
-        }
+        }*/
 
         public virtual void HandleReturn()
         {
@@ -65,7 +65,7 @@ namespace Custom.Mechanics
         #region Coroutines
         protected virtual IEnumerator DashCoroutine(Vector3 direction, float multiplier = 1f)
         {
-            base.HandleDash(direction, multiplier);
+            //base.Handle(direction, multiplier);
 
             yield return new WaitForFixedUpdate();
 

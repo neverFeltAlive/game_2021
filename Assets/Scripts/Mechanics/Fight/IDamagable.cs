@@ -12,8 +12,8 @@ using Custom.Utils;
 
 namespace Custom.Mechanics
 {
-    public interface IDamagable
+    public interface IDamagable<TDamage>
     {
-        public void TakeDamage(Damage damage);
+        public void TakeDamage(TDamage damage);
     }
 }

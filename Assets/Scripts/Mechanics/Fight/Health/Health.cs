@@ -14,7 +14,7 @@ using Custom.Utils;
 namespace Custom.Mechanics
 {
     [RequireComponent(typeof(Collider2D))]
-    public class Health : MonoBehaviour, IDamagable 
+    public class Health : MonoBehaviour, IDamagable<Damage> 
         /* DEBUG statements for this document 
          * 
          * Debug.Log("Health --> Start: ");

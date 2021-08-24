@@ -6,16 +6,20 @@
 /// </remarks>
 
 
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-// [add custom usings if needed]
 
 namespace Custom.Mechanics
 {
+    public class DashEventArgs : EventArgs
+    {
+        public float force;
+        public Vector3 direction;
+    }
+
     [RequireComponent(typeof(Rigidbody2D))]
-    public class Dash : MonoBehaviour
+    public class Dash : Mechanics<DashEventArgs>
     /* DEBUG statements for this document 
      * 
      * Debug.Log("Dash --> Start: ");
@@ -32,6 +36,7 @@ namespace Custom.Mechanics
         [SerializeField] protected float force = .45f;
         [SerializeField] protected float minMagnitude = .4f;
 
+        protected Vector3 direction;
         private Rigidbody2D body;
 
 
@@ -39,6 +44,26 @@ namespace Custom.Mechanics
         protected virtual void Awake() =>
             body = GetComponent<Rigidbody2D>();
 
+        #region Mechanics Overrides
+        // Overloads default trigger to add custom parameters
+        public virtual void Trigger(Vector3 direction)
+        {
+            this.direction = direction;
+            base.Trigger();
+        }
+
+        protected override void Handle()
+        {
+            if (direction == Vector3.zero)
+                return;
+
+            direction = ModifyDirection(direction);
+            body.MovePosition(transform.position + direction * force);
+            base.Handle();
+        }
+        #endregion
+
+        #region Methods
         private Vector3 ModifyDirection(Vector3 direction)
         {
             if (direction.magnitude > minMagnitude)
@@ -47,13 +72,13 @@ namespace Custom.Mechanics
                 return direction * minMagnitude / direction.magnitude;
         }
 
-        public virtual void HandleDash(Vector3 direction, float multiplier = 1f)
+        protected override DashEventArgs GenerateEventArgs()
         {
-            if (direction == Vector3.zero)
-                return;
-
-            direction = ModifyDirection(direction);
-            body.MovePosition(transform.position + direction * multiplier * force);
+            return new DashEventArgs { 
+                direction = this.direction, 
+                force = this.force 
+            };
         }
+        #endregion
     }
 }

@@ -1,6 +1,6 @@
 /// <remarks>
 /// 
-/// IMoving is used for [short description]
+/// IMoving is used for creating objects that can move
 /// NeverFeltAlive
 /// 
 /// </remarks>
@@ -10,8 +10,10 @@ using UnityEngine;
 
 namespace Custom.Mechanics
 {
-    public interface IMoving
+    public interface IMovement<TDir, TSpeed>
     {
-        public void Move(Vector3 direction, float speed);
+        public Vector3 Direction { get; }
+
+        public void Move(TDir direction, TSpeed speed);
     }
 }

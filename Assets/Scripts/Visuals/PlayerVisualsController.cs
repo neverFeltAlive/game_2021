@@ -64,11 +64,11 @@ namespace Platformer.Visuals
 
         private void Start()
         {
-            Roll.OnRoll += RollHandler;
+            //Roll.OnRoll += RollHandler;
             VectorMeleeAttack.OnAttack += AttackHandler;
-            PowerMeleeAttack.OnPowerAttack += AttackHandler;
+            //PowerMeleeAttack.OnPowerAttack += AttackHandler;
             TriggerableTrack.OnTrack += TrackHandler;
-            DashAndReturn.OnDashStateChanged += DashHandler;
+            //DashAndReturn.OnDashStateChanged += DashHandler;
         }
 
         private void Update() =>
@@ -94,7 +94,7 @@ namespace Platformer.Visuals
         }
 
         #region Event Handlers
-        private void DashHandler(object sender, DashAndReturn.OnDashStateChangedEventArgs args)
+/*        private void DashHandler(object sender, DashAndReturn.OnDashStateChangedEventArgs args)
         {
             switch (args.state)
             {
@@ -108,7 +108,7 @@ namespace Platformer.Visuals
                 case DashAndReturn.DashState.OnCooldown:
                     break;
             }
-        }
+        }*/
 
         private void TrackHandler(object sender, EventArgs args) =>
             PlayTrackAnimation();
@@ -153,7 +153,7 @@ namespace Platformer.Visuals
         }
         #endregion
 
-
+    
 
         #region Coroutines
         IEnumerator AnimateGlowMaterial(float time = 2f)

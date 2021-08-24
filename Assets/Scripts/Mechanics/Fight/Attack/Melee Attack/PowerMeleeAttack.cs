@@ -14,7 +14,7 @@ using Custom.Utils;
 
 namespace Custom.Mechanics
 {
-    [RequireComponent(typeof(IAttacking))]
+    [RequireComponent(typeof(IMeeleAttack<Damage, float>))]
     public class PowerMeleeAttack : MonoBehaviour
     /* DEBUG statements for this document 
      * 
@@ -40,7 +40,7 @@ namespace Custom.Mechanics
         [SerializeField] protected Damage powerAttackDamage;
         #endregion
 
-        private IAttacking attack;
+        private IMeeleAttack<Damage, float> attack;
 
         protected bool showDebug = true;
         /// <remarks>
@@ -50,7 +50,7 @@ namespace Custom.Mechanics
 
 
         private void Awake() =>
-            attack = GetComponent<IAttacking>();
+            attack = GetComponent<IMeeleAttack<Damage, float>>();
 
         public virtual void TriggerAttack()
         {

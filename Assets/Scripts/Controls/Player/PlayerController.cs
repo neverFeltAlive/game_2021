@@ -30,11 +30,11 @@ namespace Platformer.Controls
      */
     {
         public PlayerControls playerControls;
-        private CharacterMovement movement;
+        //private CharacterMovement movement;
         private VectorMeleeAttack attack;
-        private PowerMeleeAttack powerAttack;
+        //private PowerMeleeAttack powerAttack;
         private TriggerableTrack track;
-        private DashAndReturn dash;
+        //private DashAndReturn dash;
         private Roll roll;
 
         public Vector3 Position { get { return transform.position; } }
@@ -46,12 +46,12 @@ namespace Platformer.Controls
         {
             Instance = this;
 
-            dash = GetComponent<DashAndReturn>();
-            movement = GetComponent<CharacterMovement>();
-            roll = GetComponent<Roll>();
+            //dash = GetComponent<DashAndReturn>();
+            //movement = GetComponent<CharacterMovement>();
+            //roll = GetComponent<Roll>();
             track = GetComponent<TriggerableTrack>();
             attack = GetComponent<VectorMeleeAttack>();
-            powerAttack = GetComponent<PowerMeleeAttack>();
+            //powerAttack = GetComponent<PowerMeleeAttack>();
         }
 
         private void Start()
@@ -62,18 +62,18 @@ namespace Platformer.Controls
 
         private void Update()
         {
-            movement.Direction = playerControls.MainControls.Walk.ReadValue<Vector2>();
-            attack.Direction = movement.Direction;
+            //movement.Direction = playerControls.MainControls.Walk.ReadValue<Vector2>();
+            //attack.Direction = movement.Direction;
         }
 
-        public void Roll(InputAction.CallbackContext context)
+/*        public void Roll(InputAction.CallbackContext context)
         {
             if (context.canceled)
             {
                 roll.TriggerRoll();
             }
-        }
-
+        }*/
+/*
         public void Dash(InputAction.CallbackContext context)
         {
             if (dash == null)
@@ -88,7 +88,7 @@ namespace Platformer.Controls
             {
                 dash.TriggerDash(movement.Direction, false);
             }
-        }
+        }*/
 
         public void Track(InputAction.CallbackContext context)
         {
@@ -98,7 +98,7 @@ namespace Platformer.Controls
             if (context.canceled)
                 track.TriggerTrack();
         }
-
+/*
         public void Return(InputAction.CallbackContext context)
         {
             if (!context.performed)
@@ -108,14 +108,14 @@ namespace Platformer.Controls
                 return;
 
             dash.HandleReturn();
-        }
+        }*/
 
         public void Attack(InputAction.CallbackContext context)
         {
             if (context.interaction is HoldInteraction)
             {
-                if (context.performed)
-                    powerAttack.TriggerAttack();
+/*                if (context.performed)
+                    powerAttack.TriggerAttack();*/
             }
             else
             {

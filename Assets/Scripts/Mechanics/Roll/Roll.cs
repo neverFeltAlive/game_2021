@@ -12,8 +12,8 @@ using UnityEngine;
 
 namespace Custom.Mechanics
 {
-    [RequireComponent(typeof(IDisablableMovement))]
-    public class Roll : MonoBehaviour
+    [RequireComponent(typeof(IDisablableMovement<Vector3, float>))]
+    public class Roll : Mechanics<EventArgs>
     /* DEBUG statements for this document 
      * 
      * Debug.Log("Roll --> Start: ");
@@ -23,12 +23,7 @@ namespace Custom.Mechanics
      * Debug.Log("<size=13><i><b> Roll --> </b></i><color=green> Function: </color></size>");
      * 
      */
-    /* TODO
-     * 
-     */
     {
-        public static event EventHandler OnRoll;
-
         #region Fields
         [SerializeField] private float rollSpeed = 5f;
         [SerializeField] private float rollDrop = 3f;
@@ -39,7 +34,7 @@ namespace Custom.Mechanics
 
         private Vector3 _direction;
 
-        private IDisablableMovement movement;
+        private IDisablableMovement<Vector3, float> movement;
 
         public Vector3 Direction { 
             set {
@@ -52,16 +47,16 @@ namespace Custom.Mechanics
 
 
         #region MonoBehaviour Callbacks
-        private void Awake() =>
-            movement = GetComponent<IDisablableMovement>();
+        protected virtual void Awake() =>
+            movement = GetComponent<IDisablableMovement<Vector3, float>>();
 
-        private void Update()
+        protected virtual void Update()
         {
             if (!isTriggered)
                 Direction = movement.Direction;
         }
 
-        private void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
             if (!isTriggered)
                 return;
@@ -72,17 +67,21 @@ namespace Custom.Mechanics
             {
                 movement.EnableMovement();
                 isTriggered = false;
+                base.Handle();
             }
         }
         #endregion 
 
-        public void TriggerRoll()
+        public override void Trigger()
         {
             if (isTriggered)
                 return;
 
-            OnRoll?.Invoke(this, EventArgs.Empty);
+            base.Trigger();
+        }
 
+        protected override void Handle()
+        {
             currentSpeed = rollSpeed;
             movement.DisableMovement();
             movement.Move(_direction, rollSpeed);
@@ -95,6 +94,11 @@ namespace Custom.Mechanics
                 return true;
             else
                 return false;
+        }
+
+        protected override EventArgs GenerateEventArgs()
+        {
+            return EventArgs.Empty;
         }
     }
 }

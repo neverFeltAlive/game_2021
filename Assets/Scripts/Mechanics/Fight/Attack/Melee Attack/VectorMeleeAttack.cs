@@ -14,7 +14,7 @@ using Custom.Utils;
 
 namespace Custom.Mechanics
 {
-    public class VectorMeleeAttack : MonoBehaviour, IAttacking
+    public class VectorMeleeAttack : MonoBehaviour, IMeeleAttack<Damage, float>
     /* DEBUG statements for this document 
      * 
      * Debug.Log("VectorMeleeAttack --> Start: ");
@@ -22,9 +22,6 @@ namespace Custom.Mechanics
      * Debug.Log("<size=13><i><b> VectorMeleeAttack --> </b></i><color=red> Update: </color></size>");
      * Debug.Log("<size=13><i><b> VectorMeleeAttack --> </b></i><color=blue> Corutine: </color></size>");
      * Debug.Log("<size=13><i><b> VectorMeleeAttack --> </b></i><color=green> Function: </color></size>");
-     * 
-     */
-    /* TODO
      * 
      */
     {
@@ -77,10 +74,10 @@ namespace Custom.Mechanics
             {
                 if (collision.tag == targetTag)
                 {
-                    if (collision.GetComponent<IDamagable>() != null)
+                    if (collision.GetComponent<IDamagable<Damage>>() != null)
                     {
                         if (VallidateTargetLocation(direction, directionVector, collision.transform, angle))
-                            collision.GetComponent<IDamagable>().TakeDamage(damage);
+                            collision.GetComponent<IDamagable<Damage>>().TakeDamage(damage);
                     }
                 }
             }
