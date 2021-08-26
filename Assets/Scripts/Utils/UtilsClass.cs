@@ -7,8 +7,8 @@
 
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 namespace Custom.Utils
 {
@@ -59,6 +59,24 @@ namespace Custom.Utils
                     new Vector3(center.x + .01f, center.y + .01f), color, time);
             Debug.DrawLine(new Vector3(center.x - .01f, center.y + .01f),
                 new Vector3(center.x + .01f, center.y - .01f), color, time);
+        }
+
+        public static void StartCamShake(CinemachineVirtualCamera virtualCam, float intensity = .3f, float frequency = 1f)
+        {
+            CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
+                virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+            cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = intensity;
+            cinemachineBasicMultiChannelPerlin.m_FrequencyGain = frequency;
+        }
+
+        public static void StopCamShake(CinemachineVirtualCamera virtualCam)
+        {
+            CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
+                virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+            cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = 0;
+            cinemachineBasicMultiChannelPerlin.m_FrequencyGain = 0;
         }
     }
 }

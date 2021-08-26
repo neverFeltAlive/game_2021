@@ -1,13 +1,3 @@
-// <remarks>
-/// 
-/// DashAndReturn is used for extending dash mechanics
-/// It adds a cooldown mechanics, a posibolity to return to the destinations of dash
-/// And overload mechanics
-/// NeverFeltAlive
-/// 
-/// </remarks>
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,61 +7,48 @@ using Custom.Utils;
 
 namespace Custom.Mechanics
 {
-    public class DashAndReturn : Dash, IStateMechanics<DashEventArgs>
-    /*DEBUG statements for this document 
-     * 
-     * Debug.Log("DashAndReturn --> Start: ");
-     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> DashAndReturn --> </b></i><color=green> Function: </color></size>");
-     * 
-     */
-    /* TODO
-     * 
-     */
+    /// <summary>
+    /// 
+    /// DashAndReturn is used for extending dash mechanics
+    /// It adds these features to standart dash mechanics:
+    /// a cooldown mechanics, 
+    /// a posibolity to return to the destinations of dash
+    /// a posibility to perform power dash
+    /// :NeverFeltAlive
+    /// 
+    /// </summary>
+    [RequireComponent(typeof(IDisablableMovement))]
+    public class DashAndReturn : Dash
     {
-        public enum ReturnState
-        {
-            Active,
-            InActive
-        }
-
-
-
-        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
-        public event EventHandler<OnReturnStateChangedEventArgs> OnReturnStateChanged;
-        public class OnReturnStateChangedEventArgs : EventArgs
-        {
-            public MechanicsState state;
-        }
+        public event EventHandler<OnStateChangedEventArgs> OnDashStateChanged;
+        public event EventHandler<OnStateChangedEventArgs> OnReturnStateChanged;
 
 
 
         #region Serialized Fields
         [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
-        [SerializeField] [Range(1, 5)] [Tooltip("Time dash remains inactive after being complete")] private float dashInterval = .3f;
-        [Space]
-        [Header("Cooldown settings")]
+        [Space] [Header("Cooldown settings")]
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
         [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time after every return in seconds")] private float returnCooldownTime = 2f;
         [SerializeField] [Range(0f, 10f)] [Tooltip("Dash cooldown time after last return in seconds")] private float lastReturnCooldownTime = .5f;
         [SerializeField] [Range(.1f, 5f)] [Tooltip("Time  after one dash untill coldown is triggered")] private float cooldownTriggeringTime = .8f;
         #endregion
 
+        #region Private Fields
         private float lastDashTime;
 
-        private MechanicsState dashState;
-        private MechanicsState returnState;
+        private State dashState;
+        private State returnState;
 
         private List<Vector3> savedCoordinates;
+        #endregion 
 
-        public MechanicsState State { get { return dashState; } }
-
-        private bool showDebug = true;
+        #region DEBUG
         /// <remarks>
         /// Set to true to show debug vectors
         /// </remarks>
+        private bool showDebug = true;
+        #endregion
 
 
 
@@ -80,22 +57,20 @@ namespace Custom.Mechanics
         {
             base.Awake();
 
-            dashState = MechanicsState.Ready;
-            returnState = MechanicsState.Ready;
+            dashState = State.Ready;
+            returnState = State.Ready;
 
             savedCoordinates = new List<Vector3>();
         }
 
-        private void Update()
-        {
+        private void Update() =>
             CheckCooldownTriggeringTime();
-        }
         #endregion
 
         // Check if too much time passed since last dash
         private void CheckCooldownTriggeringTime()
         {
-            if (dashState == MechanicsState.Ready && savedCoordinates.Count != 0)
+            if (dashState == State.Ready && savedCoordinates.Count != 0)
             {
                 if (lastDashTime - Time.deltaTime < 0)
                 {
@@ -109,99 +84,98 @@ namespace Custom.Mechanics
                 lastDashTime = cooldownTriggeringTime;
         }
 
-        #region Dash Overrides
-        public override void Trigger(Vector3 direction)
+        public void TriggerDash(Vector3 direction, bool isPower = false)
         {
-            if (dashState != MechanicsState.Ready)
-                return;
-
-            base.Trigger(direction);
+            if (dashState == State.Ready)
+                StartCoroutine(DashCoroutine(direction, isPower));
         }
 
-        protected override void Handle()
+        public void Return()
         {
-            StartCoroutine(DashCoroutine(direction));
-        }
-        #endregion
-
-        #region Return Mechanics
-        public void TriggerReturn()
-        {
-            if (returnState == MechanicsState.Ready)
-                HandleReturn();
-        }
-
-        private void HandleReturn()
-        {
-            gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];
-            savedCoordinates.RemoveAt(savedCoordinates.Count - 1);
-
-            float cooldownTime;
-            if (savedCoordinates.Count == 0)
+            if (returnState == State.Ready)
             {
-                returnState = MechanicsState.OnCooldown;
-                OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
-                cooldownTime = lastReturnCooldownTime;
-            }
-            else
-                cooldownTime = returnCooldownTime;
+                gameObject.transform.position = savedCoordinates[savedCoordinates.Count - 1];
+                savedCoordinates.RemoveAt(savedCoordinates.Count - 1);
 
-            StopAllCoroutines();
-            StartCoroutine(Cooldown(cooldownTime));
-            /// <remarks>
-            /// We need to stop all coroutines to make last return completely restart cooldown with new timer
-            /// </remarks>
+                // Check if no coordinates are left to return
+                float cooldownTime;
+                if (savedCoordinates.Count == 0)
+                {
+                    returnState = State.OnCooldown;
+                    OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
+                    cooldownTime = lastReturnCooldownTime;
+                }
+                else
+                    cooldownTime = returnCooldownTime;
+
+                StopAllCoroutines();
+                StartCoroutine(Cooldown(cooldownTime));
+                /// We need to stop all coroutines to make last return completely restart cooldown with new timer
+            }
         }
-        #endregion
 
 
 
         #region Coroutines
-        IEnumerator DashCoroutine(Vector3 direction)
+        /// <summary>
+        /// Performs dash and then waits for the next frame to save coordinates
+        /// </summary>
+        /// <param name="isPower">True if dash force needs to be multiplied</param>
+        IEnumerator DashCoroutine(Vector3 direction, bool isPower)
         {
-            dashState = MechanicsState.Active;
-            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
-            base.Handle();
+            float interval = .3f;
+            float powerMultiplier;
+            if (isPower)
+                powerMultiplier = 3f;
+            else
+                powerMultiplier = 1f;
+            IDisablableMovement movement = GetComponent<IDisablableMovement>();
+
+            dashState = State.Active;
+            OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+
+            force *= powerMultiplier;
+            base.PerformDash(direction);
+            force /= powerMultiplier;
+            isPower = false;
+
             yield return new WaitForFixedUpdate();
             savedCoordinates.Add(transform.position);
 
-            // DEBUG
+            #region DEBUG   
             if (showDebug)
                 UtilsClass.DrawCross(transform.position, Color.yellow, 2f);
+            #endregion
 
-            returnState = MechanicsState.Ready;
-            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
+            returnState = State.Ready;
+            OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
 
-            yield return new WaitForSeconds(dashInterval);
-            /// <remarks>
-            /// Shoud be set to animation time
-            /// </remarks>
+            movement.DisableMovement();
+            yield return new WaitForSeconds(interval);
+            movement.EnableMovement();
 
+            // Check if no more dashes left
             if (savedCoordinates.Count == maxNumberOfDashes)
                 StartCoroutine(Cooldown(cooldownTime));
             else
             {
-                dashState = MechanicsState.Ready;
-                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+                dashState = State.Ready;
+                OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
             }
         }
-        /// <remarks>
-        /// Dash is implemented as a coroutine because of the need to save coordinates
-        /// We cannot save target location before moving to that location as we need to check if there are any colliders on the way
-        /// </remarks>
 
         IEnumerator Cooldown(float time)
         {
-            dashState = MechanicsState.OnCooldown;
-            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+            dashState = State.OnCooldown;
+            OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
 
             yield return new WaitForSeconds(time); // wait for required amount of seconds
 
             savedCoordinates = new List<Vector3>();
-            returnState = MechanicsState.OnCooldown;
-            dashState = MechanicsState.Ready;
-            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
-            OnReturnStateChanged?.Invoke(this, new OnReturnStateChangedEventArgs { state = returnState });
+            returnState = State.OnCooldown;
+            dashState = State.Ready;
+            OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
+            OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
         }
         #endregion
 

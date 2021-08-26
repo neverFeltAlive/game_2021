@@ -8,8 +8,6 @@
 
 using UnityEngine;
 
-// [add custom usings if needed]
-
 namespace Custom.Utils
 {
     // Classes

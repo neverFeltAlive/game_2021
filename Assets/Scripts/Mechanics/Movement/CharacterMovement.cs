@@ -1,17 +1,15 @@
-/// <remarks>
-/// 
-/// CharacterMovement is used for extending movement logic.
-/// It inherits from VelocityMovement and allows to dinamically modify speed and disable default movement
-/// NeverFeltAlive
-/// 
-/// </remarks>
-
-
 using UnityEngine;
 
 namespace Custom.Mechanics
 {
-    public class CharacterMovement : VelocityMovement, IDisablableMovement<Vector3, float>
+    /// <summary>
+    /// 
+    /// CharacterMovement is used for extending movement logic.
+    /// It inherits from VelocityMovement and allows to dinamically modify speed and disable default movement
+    /// :NeverFeltAlive
+    /// 
+    /// </summary>
+    public class CharacterMovement : VelocityMovement, IDisablableMovement
     /* DEBUG statements for this document 
      * 
      * Debug.Log("CharacterMovement --> Start: ");
@@ -64,25 +62,25 @@ namespace Custom.Mechanics
         #region Functions
         private void CheckTimer()
         {
-            if (timer - Time.deltaTime < 0)
+            if (timer - Time.deltaTime <= 0)
             {
-                speed = _maxSpeed;
+                EnableMovement();
                 timer = null;
             }
             else
                 timer -= Time.deltaTime;
         }
 
-        public void SetSpeed(float speed) =>
-            this.speed = speed;
-        public void SetSpeed(float speed, float time)
+        public void DisableMovement()
+        {
+            body.velocity = Vector2.zero;
+            isDisabled = true;
+        }
+        public void DisableMovement(float time)
         {
             timer = time;
-            SetSpeed(speed);
+            DisableMovement();
         }
-
-        public void DisableMovement() =>
-            isDisabled = true;
 
         public void EnableMovement() =>
             isDisabled = false;

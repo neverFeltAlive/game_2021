@@ -1,18 +1,16 @@
-/// <remarks>
-/// 
-/// VelocityMovement is used for basic movement action.
-/// It uses rigit body velocity.
-/// NeverFeltAlive
-/// 
-/// </remarks>
-
-
 using UnityEngine;
 
 namespace Custom.Mechanics
 {
+    /// <summary>
+    /// 
+    /// VelocityMovement is used for basic movement action.
+    /// It uses rigit body velocity.
+    /// :NeverFeltAlive
+    /// 
+    /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class VelocityMovement : MonoBehaviour, IMovement<Vector3, float>
+    public class VelocityMovement : MonoBehaviour, IMovement
     /* DEBUG statements for this document 
      * 
      * Debug.Log("VelocityMovement --> Start: ");
@@ -22,9 +20,6 @@ namespace Custom.Mechanics
      * Debug.Log("<size=13><i><b> VelocityMovement --> </b></i><color=green> Function: </color></size>");
      * 
      */
-    /* TODO
-     * 
-     */
     {
         protected float speed = 1f;
 
@@ -32,12 +27,10 @@ namespace Custom.Mechanics
 
         protected Rigidbody2D body;
 
-        public virtual float Speed {
-            get { return speed; }
-        }
-        public virtual Vector3 Direction {
+        public virtual Vector3 Direction 
+        {
             get { return _direction; }
-            set { _direction = value; } 
+            set { _direction = value; }
         }
 
 

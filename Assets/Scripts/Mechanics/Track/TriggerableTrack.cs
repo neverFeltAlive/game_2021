@@ -1,56 +1,25 @@
-/// <remarks>
-/// 
-/// TriggerableTrack is used for extanding simple track mechinics with triggering option 
-/// (you need to first trigger saving before you track)
-/// NeverFeltAlive
-/// 
-/// </remarks>
-
-
 using System;
-using System.Collections;
 using UnityEngine;
 
 namespace Custom.Mechanics
 {
+    /// <summary>
+    /// 
+    /// TriggerableTrack is used for extanding simple track mechinics with triggering option 
+    /// (you need to first trigger saving before you track)
+    /// :NeverFeltAlive
+    /// 
+    /// </summary>
     public class TriggerableTrack : Track
-    /* DEBUG statements for this document 
-     * 
-     * Debug.Log("TriggerableTrack --> Start: ");
-     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> TriggerableTrack --> </b></i><color=green> Function: </color></size>");
-     * 
-     */
-    /* TODO
-     * 
-     */
     {
-        public enum TrackingState
-        {
-            Active,
-            Off,
-            OnCooldown
-        }
+        public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
 
 
 
-        public static event EventHandler<OnTrackStateChangedEventArgs> OnTrackStateChanged;
-        public class OnTrackStateChangedEventArgs : EventArgs
-        {
-            public TrackingState state;
-        }
-
-
-
-        #region Serialized Fields
+        #region Fields
         [SerializeField] [Range(15f, 100f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 20f;
-        [Tooltip("Time to which character travels back in seconds")] public float castingTime = 1f;
-        #endregion
 
-        #region Private Fields
-        private TrackingState state;
+        private State state;
 
         private float savingTime = 10f;
         private float currentSavingTime;
@@ -65,7 +34,6 @@ namespace Custom.Mechanics
         {
             coolldownTime = 20f;
             trackingTime = 3f;
-            castingTime = 1f;
         }
         #endregion
 
@@ -76,34 +44,38 @@ namespace Custom.Mechanics
 
             currentCooldownTime = coolldownTime;
             currentSavingTime = savingTime;
-            state = TrackingState.Off;
+            state = State.Ready;
         }
 
         protected override void FixedUpdate()
         {
-            if (state == TrackingState.Active)
+            if (state == State.Active)
                 base.FixedUpdate();
 
-            if (state == TrackingState.OnCooldown)
+            if (state == State.OnCooldown)
                 HandleCooldown();
         }
         #endregion
 
         #region Functions
-        // Counts down cooldown time
+        /// <summary>
+        /// Counts down cooldown time
+        /// </summary>
         private void HandleCooldown()
         {
             if (currentCooldownTime - Time.fixedDeltaTime > 0)
                 currentCooldownTime -= Time.fixedDeltaTime;
             else
             {
-                state = TrackingState.Off;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                state = State.Ready;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
                 currentCooldownTime = coolldownTime;
             }
         }
 
-        // Saves the coordinates and counts down the time track is active
+        /// <summary>
+        /// Saves the coordinates and counts down the time track is active
+        /// </summary>
         protected override void HandleSaving()
         {
             if (currentSavingTime - Time.fixedDeltaTime > 0)
@@ -113,31 +85,34 @@ namespace Custom.Mechanics
             }
             else
             {
-                state = TrackingState.OnCooldown;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                state = State.OnCooldown;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
             }
         }
 
         public override void TriggerTrack()
         {
-            if (state == TrackingState.Active) 
+            if (state == State.Active) 
             {
                 base.TriggerTrack();
             }
 
-            if (state != TrackingState.OnCooldown)
+            if (state != State.OnCooldown)
             {
-                state = TrackingState.OnCooldown;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                state = State.OnCooldown;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
             }
         }
 
+        /// <summary>
+        /// Starts saving coordinates
+        /// </summary>
         public void TriggerSaving()
         {
-            if (state == TrackingState.Off)
+            if (state == State.Ready)
             {
-                state = TrackingState.Active;
-                OnTrackStateChanged?.Invoke(this, new OnTrackStateChangedEventArgs { state = state });
+                state = State.Active;
+                OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
                 savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
                 currentSavingTime = savingTime;
             }
