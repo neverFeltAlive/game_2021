@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+using Custom.Controlls;
+using Custom.Utils;
+
 namespace Custom.Mechanics
 {
     /// <summary>
@@ -15,6 +18,10 @@ namespace Custom.Mechanics
 
 
 
+        [SerializeField] private float bulletSpeed = 4f;
+        [SerializeField] private string targetTag;
+        [SerializeField] private Damage damage;
+        [Space]
         [SerializeField] private Transform firePoint;
         [SerializeField] private GameObject bulletPrefab;
 
@@ -22,15 +29,20 @@ namespace Custom.Mechanics
 
         public virtual void Shoot(Vector3 direction)
         {
-            float bulletSpeed = 2f;
+            if (direction != Vector3.zero)
+            {
+                direction.Normalize();
 
-            direction.Normalize();
+                damage.orrigin = transform.position;
 
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-            bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
-            bullet.transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+                bullet.GetComponent<BulletController>().damage = damage;
+                bullet.GetComponent<BulletController>().targetTag = targetTag;
+                bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
+                bullet.transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
 
-            OnShoot?.Invoke(this, EventArgs.Empty);
+                OnShoot?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

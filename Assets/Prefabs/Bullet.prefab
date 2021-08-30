@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1626960373818561903}
   - component: {fileID: 181642054}
   - component: {fileID: 7900495919292751174}
+  - component: {fileID: 4436581532279518661}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -96,7 +97,7 @@ Animator:
   m_GameObject: {fileID: 607676739092520174}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 97a34b9a3d2e5c845ad1df74a709614c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5a5bfa44a9c7ea44b9bd41de2a612902, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -152,3 +153,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 0.4}
   m_EdgeRadius: 0
+--- !u!114 &4436581532279518661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607676739092520174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7fd39ef0e975354f83979f1818a3555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage:
+    amountOfDamage: 0
+    aimPunch: 0
+    isInstant: 0
+    orrigin: {x: 0, y: 0, z: 0}
+  targetTag: 

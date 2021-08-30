@@ -93,9 +93,7 @@ namespace Custom.Mechanics
         public override void TriggerTrack()
         {
             if (state == State.Active) 
-            {
                 base.TriggerTrack();
-            }
 
             if (state != State.OnCooldown)
             {

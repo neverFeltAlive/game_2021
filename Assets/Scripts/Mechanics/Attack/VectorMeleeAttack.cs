@@ -20,9 +20,9 @@ namespace Custom.Mechanics
         
         #region Fields
         [SerializeField] protected float attackRange = .2f;
-        [SerializeField] protected Damage damage;
+        [SerializeField] protected string targetTag;
 
-        protected string targetTag = Constants.FRIENDLY_TAG;
+        [SerializeField] protected Damage damage;
         #endregion
 
         #region DEBUG

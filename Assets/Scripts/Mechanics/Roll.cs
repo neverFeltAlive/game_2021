@@ -11,6 +11,7 @@ namespace Custom.Mechanics
     /// 
     /// </summary>
     [RequireComponent(typeof(IDisablableMovement))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class Roll : MonoBehaviour
     {
         public event EventHandler OnRoll;
@@ -24,19 +25,18 @@ namespace Custom.Mechanics
         private float currentSpeed;
 
         private Vector3 direction;
+
+        private Rigidbody2D body;
         private IDisablableMovement movement;
         #endregion
 
 
 
         #region MonoBehaviour Callbacks
-        private void Awake() =>
-            movement = GetComponent<IDisablableMovement>();
-
-        private void Update()
+        private void Awake()
         {
-            if (!isRolling)
-                SetDirection(movement.Direction);
+            body = GetComponent<Rigidbody2D>();
+            movement = GetComponent<IDisablableMovement>();
         }
 
         private void FixedUpdate()
@@ -45,7 +45,7 @@ namespace Custom.Mechanics
 
             if (isRolling)
             {
-                movement.Move(direction.normalized, currentSpeed);
+                body.velocity = direction * currentSpeed;
                 currentSpeed -= rollSpeed * rollDrop * Time.fixedDeltaTime;
 
                 // Stop rolling 
@@ -56,25 +56,22 @@ namespace Custom.Mechanics
                 }
             }
         }
-        #endregion 
-        
-        private void SetDirection(Vector3 direction)
-        {
-            if (direction.magnitude > 0)
-                this.direction = direction;
-        }
+        #endregion
 
-        public void PerformRoll()
+        public void TriggerRoll(Vector3 direction)
         {
             if (!isRolling)
             {
-                OnRoll?.Invoke(this, EventArgs.Empty);
+                if (direction != Vector3.zero)
+                {
+                    OnRoll?.Invoke(this, EventArgs.Empty);
 
-                // Trigger rolling
-                currentSpeed = rollSpeed;
-                movement.DisableMovement();
-                movement.Move(direction, rollSpeed);
-                isRolling = true;
+                    // Trigger rolling
+                    currentSpeed = rollSpeed;
+                    this.direction = direction;
+                    movement.DisableMovement();
+                    isRolling = true;
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ namespace Custom.Mechanics
     /// 
     /// </summary>
     [RequireComponent(typeof(IDisablableMovement))]
-    public class DashAndReturn : Dash
+    public class DashAndReturn : Dash, IOverLoadable
     {
         public event EventHandler<OnStateChangedEventArgs> OnDashStateChanged;
         public event EventHandler<OnStateChangedEventArgs> OnReturnStateChanged;
@@ -43,6 +43,9 @@ namespace Custom.Mechanics
         private List<Vector3> savedCoordinates;
         #endregion 
 
+        private bool _isOverload;
+        public bool IsOverload { set { _isOverload = value; } }
+
         #region DEBUG
         /// <remarks>
         /// Set to true to show debug vectors
@@ -61,6 +64,8 @@ namespace Custom.Mechanics
             returnState = State.Ready;
 
             savedCoordinates = new List<Vector3>();
+
+            _isOverload = false;
         }
 
         private void Update() =>
@@ -87,7 +92,10 @@ namespace Custom.Mechanics
         public void TriggerDash(Vector3 direction, bool isPower = false)
         {
             if (dashState == State.Ready)
-                StartCoroutine(DashCoroutine(direction, isPower));
+            {
+                if (direction != Vector3.zero)
+                    StartCoroutine(DashCoroutine(direction, isPower));
+            }
         }
 
         public void Return()
@@ -125,7 +133,7 @@ namespace Custom.Mechanics
         {
             float interval = .3f;
             float powerMultiplier;
-            if (isPower)
+            if (isPower || _isOverload)
                 powerMultiplier = 3f;
             else
                 powerMultiplier = 1f;
@@ -134,10 +142,7 @@ namespace Custom.Mechanics
             dashState = State.Active;
             OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
 
-            force *= powerMultiplier;
-            base.PerformDash(direction);
-            force /= powerMultiplier;
-            isPower = false;
+            base.PerformDash(direction, force * powerMultiplier);
 
             yield return new WaitForFixedUpdate();
             savedCoordinates.Add(transform.position);
@@ -147,12 +152,12 @@ namespace Custom.Mechanics
                 UtilsClass.DrawCross(transform.position, Color.yellow, 2f);
             #endregion
 
-            returnState = State.Ready;
-            OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
-
             movement.DisableMovement();
             yield return new WaitForSeconds(interval);
             movement.EnableMovement();
+
+            returnState = State.Ready;
+            OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
 
             // Check if no more dashes left
             if (savedCoordinates.Count == maxNumberOfDashes)

@@ -12,7 +12,7 @@ namespace Custom.Mechanics
     /// 
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class PowerMeleeAttack : VectorMeleeAttack
+    public class PowerMeleeAttack : VectorMeleeAttack, IOverLoadable
     {
         #region Serialized Fields
         [Space] [Header("Power Attack Stats")]
@@ -21,19 +21,26 @@ namespace Custom.Mechanics
         [SerializeField] protected Damage powerAttackDamage;
         #endregion
 
+        private bool _isOverload;
+        public bool IsOverload { set { _isOverload = value; } }
 
+
+
+
+        private void Awake() =>
+            _isOverload = false;
 
         public virtual void TriggerAttack(Vector3 direction, bool isPower = false)
         {
-            if (isPower)
-                StartCoroutine(PowerAttack(direction, isPower));
+            if (isPower || _isOverload)
+                StartCoroutine(PowerAttack(direction)); 
             else
                 base.TriggerAttack(direction);
         }
 
 
 
-        protected IEnumerator PowerAttack(Vector3 direction, bool isPower)
+        protected IEnumerator PowerAttack(Vector3 direction)
         {
             gameObject.GetComponent<Rigidbody2D>().MovePosition(transform.position + direction.normalized * powerAttackDashRange);
 
@@ -43,8 +50,7 @@ namespace Custom.Mechanics
 
             yield return new WaitForFixedUpdate();
 
-            if (isPower)
-                base.PerformAttack(direction, powerAttackDamage, powerAttackRange);
+            base.PerformAttack(direction, powerAttackDamage, powerAttackRange);
         }
     }
 }

@@ -32,14 +32,17 @@ namespace Custom.Mechanics
         protected virtual void Awake() =>
             body = GetComponent<Rigidbody2D>();
 
-        public virtual void PerformDash(Vector3 direction)
+        public virtual void TriggerDash(Vector3 direction)
         {
             if (direction != Vector3.zero)
-            {
-                direction = ModifyDirection(direction);
-                body.MovePosition(transform.position + direction * force);
-                OnDash?.Invoke(this, new OnDashEventArgs { direction = direction });
-            }
+                PerformDash(direction, force);
+        }
+
+        protected virtual void PerformDash(Vector3 direction, float force)
+        {
+            direction = ModifyDirection(direction);
+            body.MovePosition(transform.position + direction * force);
+            OnDash?.Invoke(this, new OnDashEventArgs { direction = direction });
         }
 
         /// <summary>

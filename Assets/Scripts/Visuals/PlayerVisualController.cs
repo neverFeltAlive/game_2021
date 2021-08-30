@@ -41,7 +41,6 @@ namespace Custom.Visuals
         private VectorMeleeAttack attack;
         private PlayerFightController fightController;
 
-        private IMovement movement;
         private IEnumerator trackRoutine;
         private IEnumerator dashRoutine;
         #endregion
@@ -51,7 +50,6 @@ namespace Custom.Visuals
         #region MonoBehaviour Callbacks
         private void Awake()
         {
-            movement = GetComponent<IMovement>();
             roll = GetComponent<Roll>();
             track = GetComponent<Track>();
             dash = GetComponent<Dash>();
@@ -86,9 +84,12 @@ namespace Custom.Visuals
             if (direction.magnitude == 0 && fightController.State == PlayerFightController.AttackState.Shooting)
                 direction = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
 
+            if (direction != Vector3.zero)
+            {
+                animator.SetFloat("Horizontal", direction.x);
+                animator.SetFloat("Vertical", direction.y);
+            }
             animator.SetFloat("Magnitude", direction.magnitude);
-            animator.SetFloat("Horizontal", direction.x);
-            animator.SetFloat("Vertical", direction.y);
         }
         #endregion
 
@@ -156,7 +157,7 @@ namespace Custom.Visuals
             for (int i = 0; i < numberOfFrames; i++)
             {
                 yield return new WaitForSeconds(frameDuration);
-                dashMaterial.SetFloat("_BlurAmount", blurAmount - blurAmountDrop * i);
+                dashMaterial.SetFloat("_BlurAmount", blurAmount * direction.magnitude - blurAmountDrop * i);
             }
 
             if (virtualCam != null)
@@ -168,10 +169,10 @@ namespace Custom.Visuals
 
         IEnumerator AnimateTrackMaterial()
         {
-            int numberOfFrames = 3;
-            float castingTime = .3f;
-            float maxBlurAmount = 9f;
-            float minBlurAmount = .5f;
+            int numberOfFrames = 8;
+            float castingTime = 2f;
+            float maxBlurAmount = 12f;
+            float minBlurAmount = .05f;
 
             spriteRenderer.material = trackMaterial;
 

@@ -31,12 +31,18 @@ namespace Custom.Controlls
 
 
 
+        #region Fields
         [SerializeField] private GameObject crosshair;
+
+        private Vector3 movementDirection;
+        private Vector3 attackDirection;
+        private Vector3 shootDirection;
 
         private PowerMeleeAttack attack;
         private ShootProjectiles shoot;
 
         private AttackState _state;
+        #endregion
 
         public AttackState State { get { return _state; } }
 
@@ -52,19 +58,25 @@ namespace Custom.Controlls
 
         private void Update()
         {
+            movementDirection = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
+
             if (_state == AttackState.Shooting)
             {
-                Vector3 movementDirection = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
-                Vector3 aimDirection = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
+                shootDirection = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
 
                 if (movementDirection.magnitude == 0)
                 {
                     crosshair.SetActive(true);
                     float crosshairDistance = .2f;
-                    crosshair.transform.position = transform.position + aimDirection.normalized * crosshairDistance;
+                    crosshair.transform.position = transform.position + shootDirection.normalized * crosshairDistance;
                 }
                 else
                     crosshair.SetActive(false);
+            }
+            else
+            {
+                if (movementDirection != Vector3.zero)
+                    attackDirection = movementDirection;
             }
         }
 
@@ -74,8 +86,7 @@ namespace Custom.Controlls
             {
                 if (context.canceled)
                 {
-                    Vector3 walkDirection = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
-                    if (walkDirection == Vector3.zero)
+                    if (movementDirection == Vector3.zero)
                     {
                         Vector3 aimDirection = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
                         shoot.Shoot(aimDirection);
@@ -89,16 +100,15 @@ namespace Custom.Controlls
             if (_state != AttackState.Meele)
                 return;
 
-            Vector3 direction = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
             if (context.interaction is HoldInteraction)
             {
                 if (context.performed)
-                    attack.TriggerAttack(direction, true);
+                    attack.TriggerAttack(attackDirection, true);
             }
             else
             {
                 if (context.canceled)
-                    attack.TriggerAttack(direction, false);
+                    attack.TriggerAttack(attackDirection, false);
             }
         }
 
@@ -106,6 +116,8 @@ namespace Custom.Controlls
         {
             if (!context.performed)
                 return;
+
+            crosshair.SetActive(false);
 
             if (_state == AttackState.Meele)
                 _state = AttackState.Shooting;

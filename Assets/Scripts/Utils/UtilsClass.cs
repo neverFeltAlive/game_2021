@@ -1,17 +1,17 @@
-/// <remarks>
-/// 
-/// UtilsClass is used for containing multipurpose methods which are often used in the project
-/// NeverFeltAlive
-/// 
-/// </remarks>
-
-
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
+using Custom.Controlls;
+
 namespace Custom.Utils
 {
+    /// <summary>
+    /// 
+    /// UtilsClass is used for containing multipurpose methods which are often used in the project
+    /// :NeverFeltAlive
+    /// 
+    /// </summary>
     public static class UtilsClass
     /* DEBUG statements for this document 
      * 
@@ -23,7 +23,13 @@ namespace Custom.Utils
      * 
      */
     {
-        // Create text in a given world position
+        /// <summary>
+        /// Create text in a given world position
+        /// </summary>
+        /// <remarks>
+        /// Instantiates a new object with Text Mesh component 
+        /// and sets it up according to given params
+        /// </remarks>
         public static TextMesh CreateWorldText(string text, 
             Color color, Transform parent, 
             Vector3 localPosition, int fontSize = 2,
@@ -47,11 +53,6 @@ namespace Custom.Utils
 
             return textMesh;
         }
-        /// <summary>
-        /// We instantiate a new object with Text Mesh component 
-        /// and set it up according to given params
-        /// </summary>
-        
 
         public static void DrawCross(Vector3 center, Color color, float time)
         {

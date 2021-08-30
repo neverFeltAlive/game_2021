@@ -24,7 +24,7 @@ namespace Custom.Controlls
         public void TriggerRoll(InputAction.CallbackContext context)
         {
             if (context.canceled)
-                roll.PerformRoll();
+                roll.TriggerRoll(PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>());
         }
     }
 }

@@ -53,7 +53,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8766957772548991807}
   - component: {fileID: 8766957772548991801}
-  - component: {fileID: 8766957772548991806}
   m_Layer: 0
   m_Name: Crosshair
   m_TagString: Untagged
@@ -127,84 +126,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8766957772548991806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8766957772548991804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ComponentVersion: 1
-  m_LightType: 3
-  m_BlendStyleIndex: 0
-  m_FalloffIntensity: 1
-  m_Color: {r: 1, g: 0.9882353, b: 0.85490197, a: 1}
-  m_Intensity: 1
-  m_LightVolumeIntensity: 1
-  m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000af47b54c
-  m_LightCookieSprite: {fileID: 0}
-  m_DeprecatedPointLightCookieSprite: {fileID: 0}
-  m_LightOrder: 0
-  m_OverlapOperation: 0
-  m_NormalMapDistance: 3
-  m_NormalMapQuality: 2
-  m_UseNormalMap: 0
-  m_ShadowIntensityEnabled: 0
-  m_ShadowIntensity: 0.75
-  m_ShadowVolumeIntensityEnabled: 0
-  m_ShadowVolumeIntensity: 0.75
-  m_Vertices:
-  - position: {x: 0.9985302, y: 0.9985302, z: 0}
-    color: {r: 0.70710677, g: 0.70710677, b: 0, a: 0}
-    uv: {x: 0, y: 0}
-  - position: {x: 0.9985302, y: 0.9985302, z: 0}
-    color: {r: 0, g: 0, b: 0, a: 1}
-    uv: {x: 0, y: 0}
-  - position: {x: -0.9985302, y: 0.9985302, z: 0}
-    color: {r: -0.70710677, g: 0.70710677, b: 0, a: 0}
-    uv: {x: 0, y: 0}
-  - position: {x: -0.9985302, y: 0.9985302, z: 0}
-    color: {r: 0, g: 0, b: 0, a: 1}
-    uv: {x: 0, y: 0}
-  - position: {x: -0.99853003, y: -0.9985304, z: 0}
-    color: {r: -0.70710665, g: -0.7071069, b: 0, a: 0}
-    uv: {x: 0, y: 0}
-  - position: {x: -0.99853003, y: -0.9985304, z: 0}
-    color: {r: 0, g: 0, b: 0, a: 1}
-    uv: {x: 0, y: 0}
-  - position: {x: 0.99853003, y: -0.9985304, z: 0}
-    color: {r: 0.70710665, g: -0.7071069, b: 0, a: 0}
-    uv: {x: 0, y: 0}
-  - position: {x: 0.99853003, y: -0.9985304, z: 0}
-    color: {r: 0, g: 0, b: 0, a: 1}
-    uv: {x: 0, y: 0}
-  - position: {x: 0, y: 0, z: 0}
-    color: {r: 0, g: 0, b: 0, a: 1}
-    uv: {x: 0, y: 0}
-  m_Triangles: 030001000800020000000100030002000100050003000800040002000300050004000300070005000800060004000500070006000500010007000800000006000700010000000700
-  m_LocalBounds:
-    m_Center: {x: 0, y: -0.00000011920929, z: 0}
-    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
-  m_PointLightInnerAngle: 360
-  m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 0.3
-  m_ShapeLightParametricSides: 5
-  m_ShapeLightParametricAngleOffset: 0
-  m_ShapeLightParametricRadius: 1
-  m_ShapeLightFalloffSize: 0.5
-  m_ShapeLightFalloffOffset: {x: 0, y: 0}
-  m_ShapePath:
-  - {x: -0.5, y: -0.5, z: 0}
-  - {x: 0.5, y: -0.5, z: 0}
-  - {x: 0.5, y: 0.5, z: 0}
-  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &8766957773695907067
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,7 +239,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -1286
+  m_InstanceId: -6402
 --- !u!95 &8766957773695906948
 Animator:
   serializedVersion: 3
@@ -427,22 +348,23 @@ GameObject:
   - component: {fileID: 8766957774241016393}
   - component: {fileID: 8766957774241016398}
   - component: {fileID: 8766957774241016399}
-  - component: {fileID: 5609762745122889501}
-  - component: {fileID: 8766957774241016397}
-  - component: {fileID: 2341737105734913002}
+  - component: {fileID: 7316465943453825142}
   - component: {fileID: 8766957773567569227}
+  - component: {fileID: 8766957774241016394}
+  - component: {fileID: 4536520510245978583}
   - component: {fileID: 8766957774241016395}
   - component: {fileID: 8766957774241016404}
   - component: {fileID: 8766957774241016392}
   - component: {fileID: 8440625915015489159}
   - component: {fileID: 3973751393184378498}
+  - component: {fileID: 695223823651158064}
   - component: {fileID: 8766957774241016386}
   - component: {fileID: 8766957774241016387}
   - component: {fileID: 8766957774241016407}
   - component: {fileID: 983238608373836888}
   - component: {fileID: 6684986248008333499}
   - component: {fileID: 851579773762001083}
-  - component: {fileID: 8766957774241016394}
+  - component: {fileID: 1804713138766319667}
   m_Layer: 0
   m_Name: Player
   m_TagString: Friendly
@@ -463,6 +385,7 @@ Transform:
   m_Children:
   - {fileID: 8766957772511317408}
   - {fileID: 8766957772548991807}
+  - {fileID: 4272127646264748662}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -479,13 +402,13 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &8766957774241016399
 CircleCollider2D:
@@ -503,7 +426,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0.01}
   serializedVersion: 2
   m_Radius: 0.03
---- !u!114 &5609762745122889501
+--- !u!114 &7316465943453825142
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -616,7 +539,19 @@ MonoBehaviour:
     m_ActionId: 64ffd601-0fbb-484d-bce3-61781e4de389
     m_ActionName: Main Controls/Track[/XInputControllerWindows/rightTrigger]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 695223823651158064}
+        m_TargetAssemblyTypeName: Custom.Controlls.PlayerOverloadController, Assembly-CSharp
+        m_MethodName: TriggerOverload
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 45eb2b92-a57c-4c27-b54b-c1c2fee76dc3
     m_ActionName: Main Controls/OverLoad[/XInputControllerWindows/leftTrigger]
   - m_PersistentCalls:
@@ -660,11 +595,52 @@ MonoBehaviour:
     m_ActionId: 35e150a2-a405-40bc-a4a4-f871f5da9318
     m_ActionName: Main Controls/Toggle Lights[/XInputControllerWindows/leftStickPress]
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Gamepad
+  m_DefaultControlScheme: 
   m_DefaultActionMap: Main Controls
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &8766957774241016397
+--- !u!114 &8766957773567569227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766957774241016385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7648e999d1024f84a803d5439d44c5c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mechanics:
+  - {fileID: 8766957774241016386}
+  - {fileID: 8766957774241016387}
+  - {fileID: 8766957774241016407}
+  - {fileID: 983238608373836888}
+  - {fileID: 6684986248008333499}
+  - {fileID: 851579773762001083}
+  - {fileID: 1804713138766319667}
+--- !u!114 &8766957774241016394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766957774241016385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a862ef9307069cb449c61430d603967e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 8766957773695906950}
+  animator: {fileID: 8766957773695906948}
+  virtualCam: {fileID: 0}
+  trackMaterial: {fileID: 2100000, guid: cf40ea60e5e6ae94583f68263053ec5c, type: 2}
+  dashMaterial: {fileID: 2100000, guid: ad6135e0c4befd148b11ff2d4b0f5b36, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: 124e076c2971aae438760edf4ea65082, type: 2}
+  glowMaterial: {fileID: 2100000, guid: 2cdb859c4bef1434ebeb37b66554fa14, type: 2}
+  defaultAnimationController: {fileID: 9100000, guid: d979be8460554184cb098e3cd54c7f86, type: 2}
+  shootingAnimatorController: {fileID: 9100000, guid: ecbf05f5aa5dd394ab7f7ccc41bbf3aa, type: 2}
+--- !u!114 &4536520510245978583
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -682,61 +658,36 @@ MonoBehaviour:
     - {fileID: 8766957774241016393}
     - {fileID: 8766957774241016398}
     - {fileID: 8766957774241016399}
-    - {fileID: 5609762745122889501}
-  - Name: Movement Mechanics
+    - {fileID: 7316465943453825142}
+  - Name: Movement
     Components:
-    - {fileID: 8766957774241016386}
     - {fileID: 8766957774241016395}
-    - {fileID: 8766957774241016394}
-  - Name: Roll Mechanics
+    - {fileID: 8766957774241016386}
+  - Name: Roll
     Components:
-    - {fileID: 8766957774241016387}
     - {fileID: 8766957774241016404}
-  - Name: Dash Mechanics
+    - {fileID: 8766957774241016387}
+  - Name: Dash
     Components:
-    - {fileID: 8766957774241016407}
     - {fileID: 8766957774241016392}
-  - Name: Attack Mechanics
+    - {fileID: 8766957774241016407}
+  - Name: Fight
     Components:
-    - {fileID: 2341737105734913002}
     - {fileID: 8440625915015489159}
     - {fileID: 6684986248008333499}
     - {fileID: 983238608373836888}
-  - Name: Track Mechanics
+  - Name: Track
     Components:
     - {fileID: 3973751393184378498}
     - {fileID: 851579773762001083}
---- !u!114 &2341737105734913002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8766957774241016385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c69205dc83f9a84b9d631302b09ee56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groups:
-  - Name: Meele Attack
+  - Name: Overload
     Components:
-    - {fileID: 983238608373836888}
-  - Name: Shooting
+    - {fileID: 695223823651158064}
+    - {fileID: 1804713138766319667}
+  - Name: Master
     Components:
-    - {fileID: 6684986248008333499}
---- !u!114 &8766957773567569227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8766957774241016385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7648e999d1024f84a803d5439d44c5c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+    - {fileID: 8766957773567569227}
+    - {fileID: 8766957774241016394}
 --- !u!114 &8766957774241016395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -798,6 +749,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed6130ed61c1a144397676bf1a9ee092, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &695223823651158064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766957774241016385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64401234aeed8154587ae58e54f96fb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8766957774241016386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -823,7 +786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b77236f64cbff4a80f847f7cbcbcc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollSpeed: 4
+  rollSpeed: 3
 --- !u!114 &8766957774241016407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,10 +818,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 0.2
+  targetTag: Enemy
   damage:
-    amountOfDamage: 0
-    aimPunch: 0
-    isInstant: 0
+    amountOfDamage: 1
+    aimPunch: 1
+    isInstant: 1
     orrigin: {x: 0, y: 0, z: 0}
   powerAttackDashRange: 0.2
   powerAttackRange: 0
@@ -879,6 +843,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c194e5a7ef9c14a459e8b16de4aa1f42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletSpeed: 4
+  targetTag: Enemy
+  damage:
+    amountOfDamage: 1
+    aimPunch: 1
+    isInstant: 1
+    orrigin: {x: 0, y: 0, z: 0}
   firePoint: {fileID: 8766957772548991807}
   bulletPrefab: {fileID: 607676739092520174, guid: fea96a771933bef40b36577b2e6edab0, type: 3}
 --- !u!114 &851579773762001083
@@ -895,7 +866,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackingTime: 3
   coolldownTime: 20
---- !u!114 &8766957774241016394
+--- !u!114 &1804713138766319667
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -904,15 +875,73 @@ MonoBehaviour:
   m_GameObject: {fileID: 8766957774241016385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a862ef9307069cb449c61430d603967e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3af4bda32a66ae54aa8b967f0a25042a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 8766957773695906950}
-  animator: {fileID: 8766957773695906948}
-  virtualCam: {fileID: 0}
-  trackMaterial: {fileID: 2100000, guid: cf40ea60e5e6ae94583f68263053ec5c, type: 2}
-  dashMaterial: {fileID: 2100000, guid: ad6135e0c4befd148b11ff2d4b0f5b36, type: 2}
-  defaultMaterial: {fileID: 2100000, guid: 124e076c2971aae438760edf4ea65082, type: 2}
-  glowMaterial: {fileID: 2100000, guid: 2cdb859c4bef1434ebeb37b66554fa14, type: 2}
-  defaultAnimationController: {fileID: 9100000, guid: d979be8460554184cb098e3cd54c7f86, type: 2}
-  shootingAnimatorController: {fileID: 9100000, guid: ecbf05f5aa5dd394ab7f7ccc41bbf3aa, type: 2}
+  overLoadTime: 3
+  cooldownTime: 100
+  mechanics:
+  - {fileID: 8766957774241016407}
+  - {fileID: 983238608373836888}
+--- !u!1001 &3783111531231749178
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8766957774241016393}
+    m_Modifications:
+    - target: {fileID: 147743955410225144, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_Name
+      value: Character Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+--- !u!4 &4272127646264748662 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+  m_PrefabInstance: {fileID: 3783111531231749178}
+  m_PrefabAsset: {fileID: 0}

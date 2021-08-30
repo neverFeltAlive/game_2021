@@ -88,17 +88,19 @@ namespace Custom.Mechanics
         #region Coroutines
         protected IEnumerator TrackCoroutine()
         {
-            float trackDelay = .3f;
+            float trackDelay = 1f;
             IDisablableMovement movement = GetComponent<CharacterMovement>();
+
+            OnTrack?.Invoke(this, EventArgs.Empty);
 
             movement.DisableMovement();
             yield return new WaitForSeconds(trackDelay);
-            movement.EnableMovement();
 
             transform.position = GetLastSavedCoordinates();
             savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
 
-            OnTrack?.Invoke(this, EventArgs.Empty);
+            yield return new WaitForSeconds(trackDelay);
+            movement.EnableMovement();
         }
         #endregion
     }
