@@ -144,7 +144,7 @@ namespace Custom.Visuals
             float camShakeAmplitude = 1f;
             float camShakeFrequency = 2f;
             int numberOfFrames = 6;
-            float frameDuration = .05f;
+            float frameDuration = .025f * Time.timeScale;
             float blurAmount = 30f;
             float blurAmountDrop = 5f;
 

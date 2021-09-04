@@ -12,18 +12,15 @@ namespace Custom.Mechanics
     /// :NeverFeltAlive
     /// 
     /// </summary>
-    public class VectorMeleeAttack : MonoBehaviour
+    public class VectorMeleeAttack : MonoBehaviour, IMeeleAttack
     {
         public event EventHandler OnAttack;
 
 
-        
-        #region Fields
-        [SerializeField] protected float attackRange = .2f;
-        [SerializeField] protected string targetTag;
 
-        [SerializeField] protected Damage damage;
-        #endregion
+        [SerializeField] protected VectorMeeleAttackStats vectorMeeleAttackStats;
+        protected const float ATTACK_RANGE = .2f;
+
 
         #region DEBUG
         protected bool showDebug = true;
@@ -34,7 +31,7 @@ namespace Custom.Mechanics
 
 
         public virtual void TriggerAttack(Vector3 direction) =>
-            PerformAttack(direction, damage, attackRange);
+            PerformAttack(direction, vectorMeeleAttackStats.damage, ATTACK_RANGE);
 
         protected virtual void PerformAttack(Vector3 direction, Damage damage, float range)
         {
@@ -49,7 +46,7 @@ namespace Custom.Mechanics
             Collider2D[] collisions = Physics2D.OverlapCircleAll(gameObject.transform.position, range);
             foreach (Collider2D collision in collisions)
             {
-                if (collision.tag == targetTag)
+                if (collision.tag == vectorMeeleAttackStats.targetTag)
                 {
                     if (collision.GetComponent<IDamagable<Damage>>() != null)
                     {
@@ -75,7 +72,7 @@ namespace Custom.Mechanics
         /// </remarks>
         private bool VallidateTargetLocation(Vector3 direction, Transform target, int sectorAngle)
         {
-            Vector3 directionVector = transform.position + direction.normalized * attackRange;
+            Vector3 directionVector = transform.position + direction.normalized * ATTACK_RANGE;
 
             // Calculate target projections on boarders of the attack sector by rotating direction vector
             Vector3 targetLeftProjection = transform.position + RotateVector(direction.normalized, sectorAngle) *
@@ -92,10 +89,10 @@ namespace Custom.Mechanics
                 if (showDebug)
                 {
                     Debug.DrawLine(transform.position, directionVector, Color.blue, 2f);                                                                        // direction vector
-                    Debug.DrawLine(transform.position, transform.position + RotateVector(direction.normalized, sectorAngle) * attackRange, Color.blue, 2f);     // left boarder vector
-                    Debug.DrawLine(transform.position, transform.position + RotateVector(direction.normalized, -sectorAngle) * attackRange, Color.blue, 2f);    // right boarder vector
-                    Debug.DrawLine(directionVector, transform.position + RotateVector(direction.normalized, -sectorAngle) * attackRange, Color.blue, 2f);       // direction vector + right boarder vector
-                    Debug.DrawLine(directionVector, transform.position + RotateVector(direction.normalized, sectorAngle) * attackRange, Color.blue, 2f);        // direction vector + left boarder vector
+                    Debug.DrawLine(transform.position, transform.position + RotateVector(direction.normalized, sectorAngle) * ATTACK_RANGE, Color.blue, 2f);     // left boarder vector
+                    Debug.DrawLine(transform.position, transform.position + RotateVector(direction.normalized, -sectorAngle) * ATTACK_RANGE, Color.blue, 2f);    // right boarder vector
+                    Debug.DrawLine(directionVector, transform.position + RotateVector(direction.normalized, -sectorAngle) * ATTACK_RANGE, Color.blue, 2f);       // direction vector + right boarder vector
+                    Debug.DrawLine(directionVector, transform.position + RotateVector(direction.normalized, sectorAngle) * ATTACK_RANGE, Color.blue, 2f);        // direction vector + left boarder vector
                     Debug.DrawLine(transform.position, target.position, Color.red, 2f);                                                                         // target vector
                     Debug.DrawLine(transform.position, targetLeftProjection, Color.red, 2f);                                                                    // target left projection vector                                                              
                     Debug.DrawLine(transform.position, targetRightProjection, Color.red, 2f);                                                                   // target right projection vector

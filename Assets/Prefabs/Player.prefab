@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8766957772511317408}
   - component: {fileID: 8766957772511317411}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pivot Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8766957772548991807}
   - component: {fileID: 8766957772548991801}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 8766957773695906951}
   - component: {fileID: 8766957773695906948}
   - component: {fileID: 8766957773695906949}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -239,7 +239,7 @@ MonoBehaviour:
   - {x: 0.021432757, y: -0.044255376, z: 0}
   m_ShapePathHash: 82207328
   m_Mesh: {fileID: 0}
-  m_InstanceId: -6402
+  m_InstanceId: -1272
 --- !u!95 &8766957773695906948
 Animator:
   serializedVersion: 3
@@ -358,14 +358,15 @@ GameObject:
   - component: {fileID: 8440625915015489159}
   - component: {fileID: 3973751393184378498}
   - component: {fileID: 695223823651158064}
-  - component: {fileID: 8766957774241016386}
+  - component: {fileID: 3630912054837377957}
   - component: {fileID: 8766957774241016387}
   - component: {fileID: 8766957774241016407}
   - component: {fileID: 983238608373836888}
   - component: {fileID: 6684986248008333499}
   - component: {fileID: 851579773762001083}
   - component: {fileID: 1804713138766319667}
-  m_Layer: 0
+  - component: {fileID: 1110880896}
+  m_Layer: 7
   m_Name: Player
   m_TagString: Friendly
   m_Icon: {fileID: 0}
@@ -591,7 +592,19 @@ MonoBehaviour:
     m_ActionId: 233fea56-f609-4187-aca0-e8e6229283f0
     m_ActionName: Main Controls/Shoot[/XInputControllerWindows/rightShoulder]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1110880896}
+        m_TargetAssemblyTypeName: Custom.Controlls.SlowDownTime, Assembly-CSharp
+        m_MethodName: SlowTime
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 35e150a2-a405-40bc-a4a4-f871f5da9318
     m_ActionName: Main Controls/Toggle Lights[/XInputControllerWindows/leftStickPress]
   m_NeverAutoSwitchControlSchemes: 0
@@ -611,14 +624,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7648e999d1024f84a803d5439d44c5c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mechanics:
-  - {fileID: 8766957774241016386}
-  - {fileID: 8766957774241016387}
-  - {fileID: 8766957774241016407}
-  - {fileID: 983238608373836888}
-  - {fileID: 6684986248008333499}
-  - {fileID: 851579773762001083}
-  - {fileID: 1804713138766319667}
 --- !u!114 &8766957774241016394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,7 +667,6 @@ MonoBehaviour:
   - Name: Movement
     Components:
     - {fileID: 8766957774241016395}
-    - {fileID: 8766957774241016386}
   - Name: Roll
     Components:
     - {fileID: 8766957774241016404}
@@ -736,6 +740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b563044ff8143144a32f2662b67dd10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxAmmo: 5
   crosshair: {fileID: 8766957772548991804}
 --- !u!114 &3973751393184378498
 MonoBehaviour:
@@ -761,7 +766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64401234aeed8154587ae58e54f96fb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8766957774241016386
+--- !u!114 &3630912054837377957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -773,7 +778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d81339a44c0081409ea1db97a39c65f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxSpeed: 1
+  movementStats: {fileID: 11400000, guid: 207ec12a4b236594490901e331e035fd, type: 2}
 --- !u!114 &8766957774241016387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,7 +791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b77236f64cbff4a80f847f7cbcbcc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollSpeed: 3
+  rollStats: {fileID: 11400000, guid: db302055973f0aa479a2681c3de54d6f, type: 2}
 --- !u!114 &8766957774241016407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -799,12 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be66ad0661746f4bbbf6bc179f35349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 0.45
-  maxNumberOfDashes: 5
-  cooldownTime: 3
-  returnCooldownTime: 2
-  lastReturnCooldownTime: 0.5
-  cooldownTriggeringTime: 0.8
+  stats: {fileID: 11400000, guid: 067ed6e247493f14c83e98151022caac, type: 2}
 --- !u!114 &983238608373836888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,20 +817,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13960b93bf4fa0e49909772caec2797d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 0.2
-  targetTag: Enemy
-  damage:
-    amountOfDamage: 1
-    aimPunch: 1
-    isInstant: 1
-    orrigin: {x: 0, y: 0, z: 0}
-  powerAttackDashRange: 0.2
-  powerAttackRange: 0
-  powerAttackDamage:
-    amountOfDamage: 0
-    aimPunch: 0
-    isInstant: 0
-    orrigin: {x: 0, y: 0, z: 0}
+  vectorMeeleAttackStats: {fileID: 11400000, guid: b95b60f64559c454abe990a095fa4b14, type: 2}
+  powerMeeleAttackStats: {fileID: 11400000, guid: cb570bf53a14be14d9ab7e9f15c57b21, type: 2}
 --- !u!114 &6684986248008333499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -843,15 +831,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c194e5a7ef9c14a459e8b16de4aa1f42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 4
-  targetTag: Enemy
-  damage:
-    amountOfDamage: 1
-    aimPunch: 1
-    isInstant: 1
-    orrigin: {x: 0, y: 0, z: 0}
+  shootProjectilesStats: {fileID: 11400000, guid: e33deddde883d3247ab9a711f028ff6a, type: 2}
   firePoint: {fileID: 8766957772548991807}
-  bulletPrefab: {fileID: 607676739092520174, guid: fea96a771933bef40b36577b2e6edab0, type: 3}
 --- !u!114 &851579773762001083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -864,8 +845,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b33e5a4bb32e94bac559cf513ab058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackingTime: 3
-  coolldownTime: 20
 --- !u!114 &1804713138766319667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -878,11 +857,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af4bda32a66ae54aa8b967f0a25042a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overLoadTime: 3
-  cooldownTime: 100
+  overLoadStats: {fileID: 11400000, guid: cabe777646fa9534294ed9d7a935fc5d, type: 2}
   mechanics:
   - {fileID: 8766957774241016407}
   - {fileID: 983238608373836888}
+--- !u!114 &1110880896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766957774241016385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70caee76040fd5045baf66160461aca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3783111531231749178
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -893,6 +883,10 @@ PrefabInstance:
     - target: {fileID: 147743955410225144, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
       propertyPath: m_Name
       value: Character Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 147743955410225144, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1137698291299700300, guid: 45af1612539c1b348b26fd4c6d9791e1, type: 3}
       propertyPath: m_RootOrder

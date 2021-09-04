@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-using Custom.Utils;
-
 namespace Custom.Mechanics
 {
     /// <summary>
@@ -12,17 +10,14 @@ namespace Custom.Mechanics
     /// 
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class PowerMeleeAttack : VectorMeleeAttack, IOverLoadable
+    public class PowerMeleeAttack : VectorMeleeAttack, IPowerMeeleAttack, IOverLoadable
     {
-        #region Serialized Fields
-        [Space] [Header("Power Attack Stats")]
-        [SerializeField] protected float powerAttackDashRange;
-        [SerializeField] protected float powerAttackRange;
-        [SerializeField] protected Damage powerAttackDamage;
-        #endregion
+        #region Fields
+        [SerializeField] PowerMeeleAttackStats powerMeeleAttackStats;
 
         private bool _isOverload;
         public bool IsOverload { set { _isOverload = value; } }
+        #endregion
 
 
 
@@ -42,15 +37,15 @@ namespace Custom.Mechanics
 
         protected IEnumerator PowerAttack(Vector3 direction)
         {
-            gameObject.GetComponent<Rigidbody2D>().MovePosition(transform.position + direction.normalized * powerAttackDashRange);
+            gameObject.GetComponent<Rigidbody2D>().MovePosition(transform.position + direction.normalized * powerMeeleAttackStats.powerAttackDashRange);
 
             #region DEBUG
-            if (showDebug) Debug.DrawLine(transform.position, transform.position + direction.normalized * powerAttackDashRange, Color.yellow, 2f);
+            if (showDebug) Debug.DrawLine(transform.position, transform.position + direction.normalized * powerMeeleAttackStats.powerAttackDashRange, Color.yellow, 2f);
             #endregion
 
             yield return new WaitForFixedUpdate();
 
-            base.PerformAttack(direction, powerAttackDamage, powerAttackRange);
+            base.PerformAttack(direction, powerMeeleAttackStats.powerAttackDamage, powerMeeleAttackStats.powerAttackRange);
         }
     }
 }

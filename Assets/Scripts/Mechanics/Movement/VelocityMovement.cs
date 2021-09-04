@@ -11,15 +11,6 @@ namespace Custom.Mechanics
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
     public class VelocityMovement : MonoBehaviour, IMovement
-    /* DEBUG statements for this document 
-     * 
-     * Debug.Log("VelocityMovement --> Start: ");
-     * Debug.Log("<size=13><i><b> VelocityMovement --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> VelocityMovement --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> VelocityMovement --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> VelocityMovement --> </b></i><color=green> Function: </color></size>");
-     * 
-     */
     {
         protected float speed = 1f;
 
@@ -38,10 +29,10 @@ namespace Custom.Mechanics
         protected virtual void Awake() =>
             body = GetComponent<Rigidbody2D>();
 
-        protected virtual void FixedUpdate() => 
-            Move(_direction, speed);
+        protected virtual void FixedUpdate() =>
+            Move();
 
-        public virtual void Move(Vector3 direction, float speed) =>
-            body.velocity = direction.normalized * speed;
+        protected virtual void Move() =>
+            body.velocity = _direction.normalized * speed;
     }
 }

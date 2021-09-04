@@ -10,45 +10,26 @@ namespace Custom.Mechanics
     /// 
     /// </summary>
     public class CharacterMovement : VelocityMovement, IDisablableMovement
-    /* DEBUG statements for this document 
-     * 
-     * Debug.Log("CharacterMovement --> Start: ");
-     * Debug.Log("<size=13><i><b> CharacterMovement --> </b></i><color=yellow> FixedUpdate: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovement --> </b></i><color=red> Update: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovement --> </b></i><color=blue> Corutine: </color></size>");
-     * Debug.Log("<size=13><i><b> CharacterMovement --> </b></i><color=green> Function: </color></size>");
-     * 
-     */
-    /* TODO
-     * 
-     */
     {
-        [SerializeField] protected float _maxSpeed = 1f;
+        [SerializeField] protected CharacterMovementStats movementStats;
 
         protected bool isDisabled;
 
         private float? timer = null;
 
         public float MaxSpeed {
-            get { return _maxSpeed; }
+            get { return movementStats.maxSpeed; }
         }
 
 
 
         #region MonoBehaviour Callbacks
-        protected override void Awake()
-        {
-            base.Awake();
-
-            speed = _maxSpeed;
-        }
-
         protected override void FixedUpdate()
         {
             if (isDisabled)
                 return;
 
-            speed = Mathf.Clamp(_direction.magnitude, 0, _maxSpeed);
+            speed = Mathf.Clamp(_direction.magnitude, 0, movementStats.maxSpeed);
             base.FixedUpdate();
         }
 

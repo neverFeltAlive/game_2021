@@ -11,7 +11,6 @@ namespace Custom.Controlls
     /// :NeverFeltAlive
     /// 
     /// </summary>
-    [RequireComponent(typeof(Dash))]
     public class PlayerDashContoller : MonoBehaviour
     {
         private Dash dash;

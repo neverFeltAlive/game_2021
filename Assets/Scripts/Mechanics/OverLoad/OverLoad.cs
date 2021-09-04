@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Custom.Mechanics
 {
     /// <summary>
@@ -13,9 +12,7 @@ namespace Custom.Mechanics
     [RequireComponent(typeof(IOverLoadable))]
     public class OverLoad : MonoBehaviour
     {
-        [SerializeField] private float overLoadTime = 3f;
-        [SerializeField] private float cooldownTime = 100f;
-        [Space]
+        [SerializeField] private OverLoadStats overLoadStats;
         [SerializeField] private List<MonoBehaviour> mechanics;
 
         private float currentOverLoadTime;
@@ -37,7 +34,7 @@ namespace Custom.Mechanics
                 else
                 {
                     state = State.OnCooldown;
-                    currentCooldownTime = cooldownTime;
+                    currentCooldownTime = overLoadStats.cooldownTime;
 
                     SetOverload(false);
                 }
@@ -56,7 +53,7 @@ namespace Custom.Mechanics
         {
             if (state == State.Ready)
             {
-                currentOverLoadTime = overLoadTime;
+                currentOverLoadTime = overLoadStats.overLoadTime;
                 state = State.Active;
 
                 SetOverload(true);

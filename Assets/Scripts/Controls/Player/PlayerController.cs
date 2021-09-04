@@ -1,9 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
-
-using Custom.Mechanics;
 
 namespace Custom.Controlls
 {
@@ -32,8 +27,10 @@ namespace Custom.Controlls
 
 
 
-        private void Awake() =>
+        private void Awake()
+        {
             Instance = this;
+        }
 
         private void Start()
         {

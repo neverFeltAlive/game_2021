@@ -19,9 +19,10 @@ namespace Custom.Controlls
 
 
 
-        protected void Awake() =>
+        private void Awake()
+        {
             dash = GetComponent<DashAndReturn>();
-
+        }
         public void TriggerDash(InputAction.CallbackContext context)
         {
             Vector3 direction = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();

@@ -17,33 +17,23 @@ namespace Custom.Mechanics
 
 
         #region Fields
-        [SerializeField] [Range(15f, 100f)] [Tooltip("Cooldown time in seconds")] private float coolldownTime = 20f;
-
         private State state;
 
-        private float savingTime = 10f;
+        private const float COOLDOWN_TIME = 20f;
+        private const float SAVING_TIME = 10f;
         private float currentSavingTime;
         private float currentCooldownTime;
         #endregion
 
 
 
-        #region Context Menu
-        [ContextMenu("Default values")]
-        private void DefaultValues()
-        {
-            coolldownTime = 20f;
-            trackingTime = 3f;
-        }
-        #endregion
-
         #region MonoBehaviour Callbacks
         protected override void Awake()
         {
             base.Awake();
 
-            currentCooldownTime = coolldownTime;
-            currentSavingTime = savingTime;
+            currentCooldownTime = COOLDOWN_TIME;
+            currentSavingTime = SAVING_TIME;
             state = State.Ready;
         }
 
@@ -69,7 +59,7 @@ namespace Custom.Mechanics
             {
                 state = State.Ready;
                 OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
-                currentCooldownTime = coolldownTime;
+                currentCooldownTime = COOLDOWN_TIME;
             }
         }
 
@@ -111,8 +101,8 @@ namespace Custom.Mechanics
             {
                 state = State.Active;
                 OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
-                savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
-                currentSavingTime = savingTime;
+                savedCoordinates = new Vector3[(int)(TRACKING_TIME / Time.fixedDeltaTime)];
+                currentSavingTime = SAVING_TIME;
             }
         }
         #endregion

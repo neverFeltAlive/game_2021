@@ -22,7 +22,7 @@ namespace Custom.Mechanics
         
 
         #region Fields
-        [SerializeField] protected float force = .45f;
+        protected const float FORCE = .45f;
 
         private Rigidbody2D body;
         #endregion
@@ -35,7 +35,7 @@ namespace Custom.Mechanics
         public virtual void TriggerDash(Vector3 direction)
         {
             if (direction != Vector3.zero)
-                PerformDash(direction, force);
+                PerformDash(direction, FORCE);
         }
 
         protected virtual void PerformDash(Vector3 direction, float force)

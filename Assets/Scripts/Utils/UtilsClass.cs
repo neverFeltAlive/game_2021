@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-
-using Custom.Controlls;
 
 namespace Custom.Utils
 {

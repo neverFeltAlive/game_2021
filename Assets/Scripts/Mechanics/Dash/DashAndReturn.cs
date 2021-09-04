@@ -25,26 +25,20 @@ namespace Custom.Mechanics
 
 
 
-        #region Serialized Fields
-        [SerializeField] [Range(1, 5)] [Tooltip("Max number of dashed available at once")] private int maxNumberOfDashes = 5;
-        [Space] [Header("Cooldown settings")]
-        [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time in seconds")] private float cooldownTime = 3f;
-        [SerializeField] [Range(1f, 10f)] [Tooltip("Dash cooldown time after every return in seconds")] private float returnCooldownTime = 2f;
-        [SerializeField] [Range(0f, 10f)] [Tooltip("Dash cooldown time after last return in seconds")] private float lastReturnCooldownTime = .5f;
-        [SerializeField] [Range(.1f, 5f)] [Tooltip("Time  after one dash untill coldown is triggered")] private float cooldownTriggeringTime = .8f;
-        #endregion
+        #region Fields
+        [SerializeField] private DashAndReturnStats stats;
+        
+        private bool _isOverload;
 
-        #region Private Fields
         private float lastDashTime;
 
         private State dashState;
         private State returnState;
 
         private List<Vector3> savedCoordinates;
-        #endregion 
 
-        private bool _isOverload;
         public bool IsOverload { set { _isOverload = value; } }
+        #endregion 
 
         #region DEBUG
         /// <remarks>
@@ -79,14 +73,14 @@ namespace Custom.Mechanics
             {
                 if (lastDashTime - Time.deltaTime < 0)
                 {
-                    lastDashTime = cooldownTriggeringTime;
-                    StartCoroutine(Cooldown(cooldownTime));
+                    lastDashTime = stats.cooldownTriggeringTime;
+                    StartCoroutine(Cooldown(stats.cooldownTime));
                 }
                 else
                     lastDashTime -= Time.deltaTime;
             }
             else
-                lastDashTime = cooldownTriggeringTime;
+                lastDashTime = stats.cooldownTriggeringTime;
         }
 
         public void TriggerDash(Vector3 direction, bool isPower = false)
@@ -111,10 +105,10 @@ namespace Custom.Mechanics
                 {
                     returnState = State.OnCooldown;
                     OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
-                    cooldownTime = lastReturnCooldownTime;
+                    cooldownTime = stats.lastReturnCooldownTime;
                 }
                 else
-                    cooldownTime = returnCooldownTime;
+                    cooldownTime = stats.returnCooldownTime;
 
                 StopAllCoroutines();
                 StartCoroutine(Cooldown(cooldownTime));
@@ -131,7 +125,7 @@ namespace Custom.Mechanics
         /// <param name="isPower">True if dash force needs to be multiplied</param>
         IEnumerator DashCoroutine(Vector3 direction, bool isPower)
         {
-            float interval = .3f;
+            float interval = .15f * Time.timeScale;
             float powerMultiplier;
             if (isPower || _isOverload)
                 powerMultiplier = 3f;
@@ -142,7 +136,7 @@ namespace Custom.Mechanics
             dashState = State.Active;
             OnDashStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = dashState });
 
-            base.PerformDash(direction, force * powerMultiplier);
+            base.PerformDash(direction, FORCE * powerMultiplier);
 
             yield return new WaitForFixedUpdate();
             savedCoordinates.Add(transform.position);
@@ -160,8 +154,8 @@ namespace Custom.Mechanics
             OnReturnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = returnState });
 
             // Check if no more dashes left
-            if (savedCoordinates.Count == maxNumberOfDashes)
-                StartCoroutine(Cooldown(cooldownTime));
+            if (savedCoordinates.Count == stats.maxNumberOfDashes)
+                StartCoroutine(Cooldown(stats.cooldownTime));
             else
             {
                 dashState = State.Ready;

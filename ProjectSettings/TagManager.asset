@@ -13,13 +13,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Background
   - Water
   - UI
-  - Blocking
-  - Actor
-  - 
-  - 
+  - Walls
+  - Player
+  - Enemy
+  - Projectiles
   - 
   - 
   - 

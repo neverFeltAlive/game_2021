@@ -19,9 +19,11 @@ namespace Custom.Mechanics
 
 
         #region Fields
-        [SerializeField] private float rollSpeed = 5f;
+        [SerializeField] private RollStats rollStats;
 
         private bool isRolling = false;
+
+        private const float ROLL_DROP = 3f;
         private float currentSpeed;
 
         private Vector3 direction;
@@ -41,15 +43,14 @@ namespace Custom.Mechanics
 
         private void FixedUpdate()
         {
-            float rollDrop = 3f;
-
             if (isRolling)
             {
                 body.velocity = direction * currentSpeed;
-                currentSpeed -= rollSpeed * rollDrop * Time.fixedDeltaTime;
+                currentSpeed -= rollStats.rollSpeed * ROLL_DROP * Time.fixedDeltaTime;
 
                 // Stop rolling 
-                if (currentSpeed <= .5f)
+                float stopSpeed = .05f;
+                if (currentSpeed <= stopSpeed)
                 {
                     movement.EnableMovement();
                     isRolling = false;
@@ -67,8 +68,8 @@ namespace Custom.Mechanics
                     OnRoll?.Invoke(this, EventArgs.Empty);
 
                     // Trigger rolling
-                    currentSpeed = rollSpeed;
-                    this.direction = direction;
+                    currentSpeed = rollStats.rollSpeed;
+                    this.direction = direction.normalized;
                     movement.DisableMovement();
                     isRolling = true;
                 }

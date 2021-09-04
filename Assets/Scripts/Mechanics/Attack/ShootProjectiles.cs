@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 
 using Custom.Controlls;
-using Custom.Utils;
 
 namespace Custom.Mechanics
 {
@@ -12,18 +11,16 @@ namespace Custom.Mechanics
     /// :NeverFeltAlive
     /// 
     /// </summary>
-    public class ShootProjectiles : MonoBehaviour
+    public class ShootProjectiles : MonoBehaviour, IRangeAttack
     {
         public event EventHandler OnShoot;
 
 
 
-        [SerializeField] private float bulletSpeed = 4f;
-        [SerializeField] private string targetTag;
-        [SerializeField] private Damage damage;
-        [Space]
+        [SerializeField] private ShootPeojectilesStats shootProjectilesStats;
         [SerializeField] private Transform firePoint;
-        [SerializeField] private GameObject bulletPrefab;
+
+        private const float BULLET_SPEED = 4f;
 
 
 
@@ -33,12 +30,12 @@ namespace Custom.Mechanics
             {
                 direction.Normalize();
 
-                damage.orrigin = transform.position;
+                shootProjectilesStats.damage.orrigin = transform.position;
 
-                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-                bullet.GetComponent<BulletController>().damage = damage;
-                bullet.GetComponent<BulletController>().targetTag = targetTag;
-                bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
+                GameObject bullet = Instantiate(shootProjectilesStats.bulletPrefab, firePoint.position, Quaternion.identity);
+                bullet.GetComponent<BulletController>().damage = shootProjectilesStats.damage;
+                bullet.GetComponent<BulletController>().targetTag = shootProjectilesStats.targetTag;
+                bullet.GetComponent<Rigidbody2D>().velocity = direction * BULLET_SPEED;
                 bullet.transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
 
                 OnShoot?.Invoke(this, EventArgs.Empty);

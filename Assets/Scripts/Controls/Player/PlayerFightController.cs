@@ -32,14 +32,18 @@ namespace Custom.Controlls
 
 
         #region Fields
+        [SerializeField] private int maxAmmo = 5;
         [SerializeField] private GameObject crosshair;
+
+        private int currentAmmo;
+        private float ammoRestoreTimer = 3f;
 
         private Vector3 movementDirection;
         private Vector3 attackDirection;
         private Vector3 shootDirection;
 
-        private PowerMeleeAttack attack;
-        private ShootProjectiles shoot;
+        private IPowerMeeleAttack attack;
+        private IRangeAttack shoot;
 
         private AttackState _state;
         #endregion
@@ -51,13 +55,26 @@ namespace Custom.Controlls
         private void Awake()
         {
             _state = AttackState.Meele;
-            attack = GetComponent<PowerMeleeAttack>();
-            shoot = GetComponent<ShootProjectiles>();
+            attack = GetComponent<IPowerMeeleAttack>();
+            shoot = GetComponent<IRangeAttack>();
+            currentAmmo = maxAmmo;
             crosshair.SetActive(false);
         }
 
         private void Update()
         {
+            if (currentAmmo != maxAmmo)
+            {
+                if (ammoRestoreTimer - Time.deltaTime > 0)
+                    ammoRestoreTimer -= Time.deltaTime;
+                else
+                {
+                    currentAmmo++;
+                    ammoRestoreTimer = 3f;
+                }
+                
+            }
+
             movementDirection = PlayerController.Instance.playerControls.MainControls.Walk.ReadValue<Vector2>();
 
             if (_state == AttackState.Shooting)
@@ -88,8 +105,12 @@ namespace Custom.Controlls
                 {
                     if (movementDirection == Vector3.zero)
                     {
-                        Vector3 aimDirection = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
-                        shoot.Shoot(aimDirection);
+                        if (currentAmmo > 0)
+                        {
+                            Vector3 aimDirection = PlayerController.Instance.playerControls.MainControls.Aim.ReadValue<Vector2>();
+                            shoot.Shoot(aimDirection);
+                            currentAmmo--;
+                        }
                     }
                 }
             }

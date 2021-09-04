@@ -20,7 +20,7 @@ namespace Custom.Mechanics
 
 
         #region Fields
-        [SerializeField] [Range(1f, 5f)] [Tooltip("Time to which character travels back in seconds")] protected float trackingTime = 3f;
+        protected const float TRACKING_TIME = 3f;
 
         protected Vector3[] savedCoordinates;
         #endregion
@@ -35,7 +35,7 @@ namespace Custom.Mechanics
 
 
         protected virtual void Awake() =>
-            savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
+            savedCoordinates = new Vector3[(int)(TRACKING_TIME / Time.fixedDeltaTime)];
 
         protected virtual void FixedUpdate() =>
             HandleSaving();
@@ -97,7 +97,7 @@ namespace Custom.Mechanics
             yield return new WaitForSeconds(trackDelay);
 
             transform.position = GetLastSavedCoordinates();
-            savedCoordinates = new Vector3[(int)(trackingTime / Time.fixedDeltaTime)];
+            savedCoordinates = new Vector3[(int)(TRACKING_TIME / Time.fixedDeltaTime)];
 
             yield return new WaitForSeconds(trackDelay);
             movement.EnableMovement();

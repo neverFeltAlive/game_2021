@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57bbd20a8f5968b439b78f5ddd20f908, type: 3}
+  m_Name: PlayerShootProjectilesStats
+  m_EditorClassIdentifier: 
+  targetTag: Enemy
+  damage:
+    amountOfDamage: 1
+    aimPunch: 1
+    isInstant: 1
+    orrigin: {x: 0, y: 0, z: 0}
+  bulletPrefab: {fileID: 607676739092520174, guid: fea96a771933bef40b36577b2e6edab0, type: 3}
