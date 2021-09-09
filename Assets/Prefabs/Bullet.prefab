@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3053863872528504992}
   - component: {fileID: 465264978198510117}
   - component: {fileID: 418252212389959668}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 277796049
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 2125029477629824145, guid: c30b8eff1b9d742498fcd0c469cbb19b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -113,7 +113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 607676739092520173}
   - component: {fileID: 181642054}
-  - component: {fileID: 7900495919292751174}
+  - component: {fileID: 3063368979805287414}
   - component: {fileID: 4436581532279518661}
   m_Layer: 9
   m_Name: Bullet
@@ -151,15 +151,15 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &7900495919292751174
-BoxCollider2D:
+--- !u!70 &3063368979805287414
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -171,19 +171,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.3, y: -0.01}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 0.64}
-    newSize: {x: 1.28, y: 0.64}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2, y: 0.4}
-  m_EdgeRadius: 0
+  m_Offset: {x: -0.006570521, y: -0.01861936}
+  m_Size: {x: 1.4380759, y: 0.152343}
+  m_Direction: 1
 --- !u!114 &4436581532279518661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,6 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7fd39ef0e975354f83979f1818a3555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
   targetTag: 
   damage:
     amountOfDamage: 0

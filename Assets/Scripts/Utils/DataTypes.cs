@@ -16,9 +16,9 @@ namespace Custom.Utils
     public static class Constants
     {
         // Object identifiers 
-        public const string CHARACTER_NAME = "Character";
+        public const string WALL_TAG = "Wall";
         public const string ENEMY_TAG = "Enemy";
-        public const string FRIENDLY_TAG = "Friendly";
+        public const string PLAYER_TAG = "Player";
 
         // Animation parameters
         public const string ATTACK = "Attack";                                                          // triggers attack

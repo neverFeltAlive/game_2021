@@ -13,10 +13,14 @@ namespace Custom.Controlls
     /// </summary>
     public class BulletController : MonoBehaviour
     {
+        private int bounceCount;
+
+        private Vector3 lastVelocity;
+
+        private Rigidbody2D body;
+
         [HideInInspector] public string targetTag;
         [HideInInspector] public Damage damage;
-        private Rigidbody2D body;
-        private Vector3 lastVelocity;
 
 
 
@@ -33,22 +37,36 @@ namespace Custom.Controlls
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            float currentSpeed = lastVelocity.magnitude;
-            Vector3 direction = Vector3.Reflect(lastVelocity.normalized, collision.contacts[0].normal);
-            transform.right = lastVelocity.normalized;
-            //transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-            //transform.rotation = Quaternion.LookRotation(direction);
-            body.velocity = direction * currentSpeed;
+            if (collision.gameObject.tag == Constants.WALL_TAG)
+                Bounce(collision);
+            else if (collision.gameObject.tag == Constants.PLAYER_TAG || collision.gameObject.tag == Constants.ENEMY_TAG)
+                Damage(collision);
+        }
 
-/*            if (collision.transform.tag == targetTag)
+        private void Damage(Collision2D collision)
+        {
+            IDamagable<Damage> enemy = collision.transform.GetComponent<IDamagable<Damage>>();
+
+            if (enemy != null)
+                enemy.TakeDamage(damage);
+
+            Destroy(gameObject);
+        }
+
+        private void Bounce(Collision2D collision)
+        {
+            int maxBounceCount = 3;
+
+            bounceCount++;
+            if (bounceCount > maxBounceCount)
+                Destroy(gameObject);
+            else
             {
-                IDamagable<Damage> enemy = collision.transform.GetComponent<IDamagable<Damage>>();
-
-                if (enemy != null)
-                    enemy.TakeDamage(damage);
+                float currentSpeed = lastVelocity.magnitude;
+                Vector3 direction = Vector3.Reflect(lastVelocity, collision.GetContact(0).normal);
+                body.velocity = direction.normalized * currentSpeed;
+                transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
             }
-
-            Destroy(gameObject);*/
         }
     }
 }

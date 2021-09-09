@@ -19,6 +19,7 @@ namespace Custom.Mechanics
 
         [SerializeField] private ShootPeojectilesStats shootProjectilesStats;
         [SerializeField] private Transform firePoint;
+        [SerializeField] private LayerMask obstacleMask;
 
         private const float BULLET_SPEED = 4f;
 
@@ -32,11 +33,15 @@ namespace Custom.Mechanics
 
                 shootProjectilesStats.damage.orrigin = transform.position;
 
-                GameObject bullet = Instantiate(shootProjectilesStats.bulletPrefab, firePoint.position, Quaternion.identity);
-                bullet.GetComponent<BulletController>().damage = shootProjectilesStats.damage;
-                bullet.GetComponent<BulletController>().targetTag = shootProjectilesStats.targetTag;
-                bullet.GetComponent<Rigidbody2D>().velocity = direction * BULLET_SPEED;
-                bullet.transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+                float distance = Vector3.Distance(transform.position, firePoint.position);
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, firePoint.position, distance, obstacleMask);
+                if (hit.collider == null)
+                {
+                    GameObject bullet = Instantiate(shootProjectilesStats.bulletPrefab, firePoint.position, Quaternion.identity);
+                    bullet.GetComponent<BulletController>().damage = shootProjectilesStats.damage;
+                    bullet.GetComponent<Rigidbody2D>().velocity = direction * BULLET_SPEED;
+                    bullet.transform.Rotate(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+                }
 
                 OnShoot?.Invoke(this, EventArgs.Empty);
             }
